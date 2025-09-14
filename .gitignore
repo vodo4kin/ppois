@@ -1,0 +1,49 @@
+# Игнорировать скомпилированные бинарники
+*.exe
+*.out
+*.app
+
+# Игнорировать объектные файлы
+*.o
+*.obj
+
+# Игнорировать файлы сборки (CMake, Make)
+CMakeLists.txt.user
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+_deps
+
+# Игнорировать временные файлы IDE
+*.swp
+*.swo
+*~
+*.idea
+.vscode
+*.suo
+*.sln
+*.vcxproj*
+*.user
+
+# Игнорировать системные файлы
+.DS_Store
+Thumbs.db
+
+# Игнорировать папки сборки
+build/
+bin/
+obj/
+
+# Игнорировать логи
+*.log
+
+# Игнорировать документацию (если не нужно)
+*.pdf
+*.doc
+*.docx
