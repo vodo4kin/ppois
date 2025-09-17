@@ -1,13 +1,10 @@
 #include <iostream>
 #include "Sets.hpp"
-using namespace std;
 
 int main(){
     Set set;
-    set = "{a, b, c    , {{{}}}}";
-    Set setTwo;
-    setTwo = "{b}";
-    set-=setTwo;
-    cout << set << endl;
+    std::cin >> set;
+    std::cout << "Cardinality: " << set.getCardinality() << std::endl;
+    std::cout << set << std::endl;
     return 0;
 }

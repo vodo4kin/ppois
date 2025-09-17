@@ -104,6 +104,13 @@ class Set{
     Set();
 
     /**
+     * @brief Construct a new Set object
+     * 
+     * @param str 
+     */
+    Set(const std::string str);
+
+    /**
      * @brief Destroy the Set object
      * 
      */

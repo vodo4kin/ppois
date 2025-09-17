@@ -79,24 +79,24 @@ std::vector<std::string> Set::parseSetString(const std::string& string){
         strWithoutSpace = strWithoutSpace.substr(1, strWithoutSpace.size() - 2);
     }
     int balance = 0;
-    std::string Element;
+    std::string element;
     for (char c : strWithoutSpace) {
         if (c == '{') {
             balance++;
-            Element += c;
+            element += c;
         } else if (c == '}') {
             balance--;
-            Element += c;
+            element += c;
         } else if (c == ',' && balance == 0) {
             // запятая разделяет эелементы
-            elements.push_back(Element);
-            Element.clear();
+            elements.push_back(element);
+            element.clear();
         } else {
-            Element += c;
+            element += c;
         }
     }
-    if (!Element.empty()) {
-        elements.push_back(Element); // last элемент
+    if (!element.empty()) {
+        elements.push_back(element); // last элемент
     }
     return elements;
 }
@@ -293,6 +293,10 @@ std::istream& operator>>(std::istream& is, Set& set) {
     
     set = line;
     return is;
+}
+
+Set::Set(const std::string str){
+    operator=(str);
 }
 
 Set::Set() = default;

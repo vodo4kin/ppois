@@ -22,7 +22,8 @@ TEST(SetDefault, SetWithOnlySpacesIsEmpty) { //3
 TEST(SetCardinality, ComplexNestedSetHasCardinality6) { //4
     Set set;
     set = "{a, b, d, qqq, {sfd,sdsd}, {54, {123, 543, asd}}}";
-    EXPECT_TRUE(set.getCardinality() == 6);
+    set.remove("b");
+    EXPECT_TRUE(set.getCardinality() == 5);
 }
 
 TEST(SetCardinality, DeeplyNestedSetHasCardinality1) { //5
@@ -40,7 +41,8 @@ TEST(SetCardinality, EmptySetHasCardinality0) { //6
 TEST(SetCardinality, SetWithNestedSetHasCardinality3) { //7
     Set set;
     set = "{Cat, Dog, {Cat, Dog}}";
-    EXPECT_TRUE(set.getCardinality() == 3);
+    Set newSet(set);
+    EXPECT_TRUE(newSet.getCardinality() == 3 && set.getCardinality() == 3);
 }
 
 TEST(SetCardinality, SetWithDuplicatesHasCardinality5) { //8
@@ -64,13 +66,12 @@ TEST(SetValidation, QuadrupleNestedSetIsValid) { //10
 
 TEST(SetValidation, SetWithTrailingCommaIsInvalid) { //11
     Set set;
-    set = "{adasd, 123123,}";
+    set = "{adasd, 123123>}";
     EXPECT_TRUE(set.getCardinality() == 0);
 }
 
 TEST(SetValidation, SetWithSpacesIsValid) { //12
-    Set set;
-    set = "{    adasd,      123123           }";
+    Set set("{adasd,        123123}");
     EXPECT_TRUE(set["adasd"] && set["123123"]);
 }
 

@@ -105,6 +105,13 @@ class MultiSet{
     MultiSet();
 
     /**
+     * @brief Construct a new Multi Set object
+     * 
+     * @param str 
+     */
+    MultiSet(const std::string& str);
+
+    /**
      * @brief Destroy the MultiSet object
      * 
      */
