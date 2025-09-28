@@ -58,9 +58,9 @@ std::string BookTitle::getFullTitle() const noexcept{
 }
 
 bool BookTitle::operator==(const BookTitle& other) const noexcept{
-    return title == other.getTitle() && 
-           subtitle == other.getSubtitle() && 
-           language == other.getLanguage();
+    return title == other.title && 
+           subtitle == other.subtitle && 
+           language == other.language;
 }
 
 bool BookTitle::operator!=(const BookTitle& other) const noexcept{

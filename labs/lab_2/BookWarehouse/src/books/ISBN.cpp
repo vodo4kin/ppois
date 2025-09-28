@@ -85,7 +85,7 @@ bool ISBN::isISBNThirteen() const{
 }
 
 bool ISBN::operator==(const ISBN& other) const noexcept{
-    return code == other.getCode();
+    return code == other.code;
 }
 
 bool ISBN::operator!=(const ISBN& other) const noexcept{

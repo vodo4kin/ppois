@@ -59,8 +59,8 @@ std::string Publisher::getInfo() const noexcept{
 }
 
 bool Publisher::operator==(const Publisher& other) const noexcept{
-    return name == other.getName() && contactEmail == other.getContactEmail()
-        && foundationYear == other.getFoundationYear();
+    return name == other.name && contactEmail == other.contactEmail
+        && foundationYear == other.foundationYear;
 }
 
 bool Publisher::operator!=(const Publisher& other) const noexcept{

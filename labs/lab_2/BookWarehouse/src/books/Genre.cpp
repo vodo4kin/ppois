@@ -26,7 +26,7 @@ Genre::Type Genre::getGenre() const noexcept{
 }
 
 bool Genre::operator==(const Genre& other) const noexcept{
-    return genre == other.getGenre();
+    return genre == other.genre;
 }
 
 bool Genre::operator!=(const Genre& other) const noexcept{
