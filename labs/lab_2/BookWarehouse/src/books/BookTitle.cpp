@@ -64,7 +64,5 @@ bool BookTitle::operator==(const BookTitle& other) const noexcept{
 }
 
 bool BookTitle::operator!=(const BookTitle& other) const noexcept{
-    return title != other.getTitle() || 
-           subtitle != other.getSubtitle() || 
-           language != other.getLanguage();
+    return !(*this == other);
 }

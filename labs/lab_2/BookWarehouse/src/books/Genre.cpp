@@ -30,5 +30,5 @@ bool Genre::operator==(const Genre& other) const noexcept{
 }
 
 bool Genre::operator!=(const Genre& other) const noexcept{
-    return genre != other.getGenre();
+    return !(*this == other);
 }

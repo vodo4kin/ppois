@@ -89,5 +89,5 @@ bool ISBN::operator==(const ISBN& other) const noexcept{
 }
 
 bool ISBN::operator!=(const ISBN& other) const noexcept{
-    return code != other.getCode();
+    return !(*this == other);
 }
