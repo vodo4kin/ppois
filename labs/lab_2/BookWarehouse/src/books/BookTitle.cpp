@@ -13,14 +13,12 @@ bool BookTitle::isValidTitle(const std::string& title) const{
 
 std::string BookTitle::validationLanguage(const std::string& language) const{
     std::string result;
-    
     for(char c : language){
         if(!std::isalpha(static_cast<unsigned char>(c))){
             throw DataValidationException("Language must contain only letters: '" + language + "'");
         }
         result += std::toupper(c);
     }
-    
     return result;
 }
 
