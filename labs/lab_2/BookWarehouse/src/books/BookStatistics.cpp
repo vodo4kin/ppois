@@ -1,5 +1,6 @@
 #include "books/BookStatistics.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "utils/Utils.hpp"
 #include <cmath>
 
 bool BookStatistics::isValidViewCount(int views) const {
@@ -18,19 +19,6 @@ bool BookStatistics::isValidReviewCount(int reviews) const {
     return reviews >= 0;
 }
 
-bool BookStatistics::isValidDate(const std::string& date) const {
-    if (date.empty()) return true;
-    if (date.length() != 10) return false;
-    if (date[4] != '-' || date[7] != '-') return false;
-    
-    for (int i = 0; i < 10; i++) {
-        if (i != 4 && i != 7 && !std::isdigit(static_cast<unsigned char>(date[i]))) {
-            return false;
-        }
-    }
-    return true;
-}
-
 BookStatistics::BookStatistics(int viewCount, int salesCount, 
                    double averageRating, int reviewCount,
                    const std::string& lastSaleDate) {
@@ -46,7 +34,7 @@ BookStatistics::BookStatistics(int viewCount, int salesCount,
     if (!isValidReviewCount(reviewCount)) {
         throw DataValidationException("Invalid review count: " + std::to_string(reviewCount));
     }
-    if (!isValidDate(lastSaleDate)) {
+    if (!StringValidation::isValidDate(lastSaleDate)) {
         throw DataValidationException("Invalid date format: '" + lastSaleDate + "'");
     }
     this->viewCount = viewCount;
@@ -105,8 +93,8 @@ void BookStatistics::setReviewCount(int reviews) {
 }
 
 void BookStatistics::setLastSaleDate(const std::string& date) {
-    if (!isValidDate(date)) {
-        throw DataValidationException("Invalid date format: '" + date + "'");
+    if (!StringValidation::isValidDate(lastSaleDate)) {
+        throw DataValidationException("Invalid date format: '" + lastSaleDate + "'");
     }
     lastSaleDate = date;
 }
@@ -148,10 +136,14 @@ void BookStatistics::updateRating(double newRating) {
     if (!isValidRating(newRating)) {
         throw DataValidationException("Invalid rating: " + std::to_string(newRating));
     }
-    // старый_средний * старые_отзывы + новый_рейтинг) / (старые_отзывы + 1)
-    double totalRating = averageRating * reviewCount + newRating;
-    reviewCount++;
-    averageRating = totalRating / reviewCount;
+    if (reviewCount == 0) {
+        averageRating = newRating;
+        reviewCount = 1;
+    } else {
+        double totalRating = averageRating * reviewCount + newRating;
+        reviewCount++;
+        averageRating = totalRating / reviewCount;
+    }
 }
 
 double BookStatistics::getPopularityScore() const noexcept {

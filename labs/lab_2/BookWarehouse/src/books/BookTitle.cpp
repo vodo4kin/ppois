@@ -1,5 +1,6 @@
 #include "books/BookTitle.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "utils/Utils.hpp"
 
 bool BookTitle::isValidTitle(const std::string& title) const{
     if (title.length() < MIN_LENGTH || title.length() > MAX_LENGTH) return false;
@@ -11,17 +12,6 @@ bool BookTitle::isValidTitle(const std::string& title) const{
     return hasNonSpace;
 }
 
-std::string BookTitle::validationLanguage(const std::string& language) const{
-    std::string result;
-    for(char c : language){
-        if(!std::isalpha(static_cast<unsigned char>(c))){
-            throw DataValidationException("Language must contain only letters: '" + language + "'");
-        }
-        result += std::toupper(c);
-    }
-    return result;
-}
-
 BookTitle::BookTitle(const std::string& title, const std::string& subtitle, const std::string& language){
     if(!isValidTitle(title)){
         throw DataValidationException("Invalid book title: '" + title + "'");
@@ -29,7 +19,7 @@ BookTitle::BookTitle(const std::string& title, const std::string& subtitle, cons
     if (!subtitle.empty() && !isValidTitle(subtitle)) {
         throw DataValidationException("Invalid book subtitle: '" + subtitle + "'");
     }
-    std::string newLanguage = validationLanguage(language);
+    std::string newLanguage = StringValidation::normalizeLanguage(language);
     if (newLanguage.empty() || newLanguage.length() != 2){
         throw DataValidationException("Language must be 2 letters: '" + language + "'");
     }

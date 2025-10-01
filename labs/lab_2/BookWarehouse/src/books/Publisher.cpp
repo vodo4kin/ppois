@@ -1,14 +1,9 @@
 #include "books/Publisher.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "utils/Utils.hpp"
 
 bool Publisher::isValidName(const std::string& name) const{
-    if(name.length() < MIN_NAME_LENGTH || name.length() > MAX_NAME_LENGTH) return false;
-    bool hasNonSpace = false;
-    for (char c : name) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(name, MAX_NAME_LENGTH);
 }
 
 bool Publisher::isValidEmail(const std::string& email) const {

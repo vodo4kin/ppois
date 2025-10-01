@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 class BookMetadata {
@@ -9,7 +10,6 @@ private:
     std::string language;
     int edition;
     std::string description;
-    std::string validationLanguage(const std::string& language) const;
     bool isValidYear(int year) const;
     bool isValidEdition(int edition) const;
     bool isValidDescription(const std::string& desc) const;

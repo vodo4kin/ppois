@@ -1,5 +1,6 @@
 #include "books/PhysicalProperties.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "utils/Utils.hpp"
 
 bool PhysicalProperties::isValidWeight(int weight) const {
     return weight > 0 && weight <= MAX_WEIGHT;
@@ -31,8 +32,8 @@ PhysicalProperties::PhysicalProperties(int weight, int height, int width,
     if (!isValidPageCount(pageCount)) {
         throw DataValidationException("Invalid page count: " + std::to_string(pageCount));
     }
-    if (material.empty()) {
-        throw DataValidationException("Material cannot be empty");
+    if (!StringValidation::isValidName(material)) {
+        throw DataValidationException("Invalid material: '" + material + "'");
     }
     
     this->weight = weight;

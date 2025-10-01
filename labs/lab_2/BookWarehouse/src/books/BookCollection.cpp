@@ -1,16 +1,10 @@
 #include "books/BookCollection.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include <algorithm>
+#include "utils/Utils.hpp"
 
 bool BookCollection::isValidName(const std::string& name) const {
-    if (name.empty() || name.length() > MAX_NAME_LENGTH) {
-        return false;
-    }
-    bool hasNonSpace = false;
-    for (char c : name) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(name, MAX_NAME_LENGTH);
 }
 
 bool BookCollection::isValidDescription(const std::string& desc) const {
@@ -18,13 +12,7 @@ bool BookCollection::isValidDescription(const std::string& desc) const {
 }
 
 bool BookCollection::isValidCategory(const std::string& category) const {
-    if (category.empty()) return false;
-    bool hasNonSpace = false;
-    for (char c : category) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(category, MAX_NAME_LENGTH);
 }
 
 BookCollection::BookCollection(const std::string& name, const std::string& description,
@@ -55,29 +43,34 @@ std::string BookCollection::getCategory() const noexcept {
     return category;
 }
 
-void BookCollection::addBook(/* Book* book */) {
-    // заглушка
-    // books.push_back(book);
+void BookCollection::addBook(std::shared_ptr<Book> book) {
+    if (!book) {
+        throw DataValidationException("Book cannot be null");
+    }
+    if (containsBook(book)) {
+        throw DuplicateBookException("Book already in collection: " + book->getTitle().getFullTitle());
+    }
+    books.push_back(book);
 }
 
-void BookCollection::removeBook(/* Book* book */) {
-    // заглушка
-    // auto it = std::find(books.begin(), books.end(), book);
-    // if (it != books.end()) books.erase(it);
+void BookCollection::removeBook(std::shared_ptr<Book> book) {
+    if (!book) return;
+    auto it = std::find(books.begin(), books.end(), book);
+    if (it != books.end()) {
+        books.erase(it);
+    }
 }
 
 size_t BookCollection::getBookCount() const noexcept {
-    return books.size();  // заглушка
+    return books.size();
 }
 
-bool BookCollection::containsBook(/* Book* book */) const {
-    // заглушка
-    // return std::find(books.begin(), books.end(), book) != books.end();
-    return false;
+bool BookCollection::containsBook(std::shared_ptr<Book> book) const {
+    return std::find(books.begin(), books.end(), book) != books.end();
 }
 
 bool BookCollection::isEmpty() const noexcept {
-    return books.empty();  // заглушка
+    return books.empty();
 }
 
 std::string BookCollection::getInfo() const noexcept {
@@ -92,8 +85,8 @@ std::string BookCollection::getInfo() const noexcept {
 bool BookCollection::operator==(const BookCollection& other) const noexcept {
     return name == other.name &&
            description == other.description &&
-           category == other.category;
-           // books == other.books  // заглушка
+           category == other.category &&
+           books == other.books; 
 }
 
 bool BookCollection::operator!=(const BookCollection& other) const noexcept {

@@ -1,18 +1,6 @@
 #include "books/BookMetadata.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
-
-std::string BookMetadata::validationLanguage(const std::string& language) const {
-    std::string result;
-    
-    for(char c : language){
-        if(!std::isalpha(static_cast<unsigned char>(c))){
-            throw DataValidationException("Language must contain only letters: '" + language + "'");
-        }
-        result += std::toupper(static_cast<unsigned char>(c));
-    }
-    
-    return result;
-}
+#include "utils/Utils.hpp"
 
 bool BookMetadata::isValidYear(int year) const {
     return year >= MIN_YEAR && year <= MAX_YEAR;
@@ -32,20 +20,16 @@ BookMetadata::BookMetadata(int publicationYear, const std::string& language,
     if (!isValidYear(publicationYear)) {
         throw DataValidationException("Invalid publication year: " + std::to_string(publicationYear));
     }
-    
-    // Используем метод валидации языка
-    std::string newLanguage = validationLanguage(language);
+    std::string newLanguage = StringValidation::normalizeLanguage(language);
     if (newLanguage.length() != 2) {
         throw DataValidationException("Language must be 2 letters: '" + language + "'");
     }
-    
     if (!isValidEdition(edition)) {
         throw DataValidationException("Invalid edition: " + std::to_string(edition));
     }
     if (!isValidDescription(description)) {
         throw DataValidationException("Description too long");
     }
-    
     this->publicationYear = publicationYear;
     this->language = newLanguage;  // Уже нормализованный
     this->edition = edition;

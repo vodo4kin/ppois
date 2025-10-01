@@ -1,57 +1,22 @@
 #include "books/BookReview.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "utils/Utils.hpp"
 #include <cctype>
 
 bool BookReview::isValidAuthor(const std::string& author) const {
-    if (author.empty() || author.length() > MAX_AUTHOR_LENGTH) {
-        return false;
-    }
-    bool hasNonSpace = false;
-    for (char c : author) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(author, MAX_AUTHOR_LENGTH);
 }
 
 bool BookReview::isValidTitle(const std::string& title) const {
-    if (title.empty() || title.length() > MAX_TITLE_LENGTH) {
-        return false;
-    }
-    bool hasNonSpace = false;
-    for (char c : title) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(title, MAX_TITLE_LENGTH);
 }
 
 bool BookReview::isValidText(const std::string& text) const {
-    if (text.empty() || text.length() > MAX_TEXT_LENGTH) {
-        return false;
-    }
-    bool hasNonSpace = false;
-    for (char c : text) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(text, MAX_TEXT_LENGTH);
 }
 
 bool BookReview::isValidRating(int rating) const {
     return rating >= MIN_RATING && rating <= MAX_RATING;
-}
-
-bool BookReview::isValidDate(const std::string& date) const {
-    if (date.length() != 10) return false;
-    if (date[4] != '-' || date[7] != '-') return false;
-    
-    for (int i = 0; i < 10; i++) {
-        if (i != 4 && i != 7 && !std::isdigit(static_cast<unsigned char>(date[i]))) {
-            return false;
-        }
-    }
-    return true;
 }
 
 BookReview::BookReview(const std::string& author, const std::string& title, 
@@ -68,7 +33,7 @@ BookReview::BookReview(const std::string& author, const std::string& title,
     if (!isValidRating(rating)) {
         throw DataValidationException("Invalid rating: " + std::to_string(rating));
     }
-    if (!isValidDate(date)) {
+    if (!StringValidation::isValidDate(date)) {
         throw DataValidationException("Invalid date format: '" + date + "' (expected YYYY-MM-DD)");
     }
     this->author = author;

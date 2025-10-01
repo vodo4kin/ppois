@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 class BookTitle{
@@ -8,7 +9,6 @@ class BookTitle{
     std::string subtitle;
     std::string language;
     bool isValidTitle(const std::string& title) const;
-    std::string validationLanguage(const std::string& language) const;
     public:
     explicit BookTitle(const std::string& title, const std::string& subtitle, const std::string& language);
     std::string getTitle() const noexcept;

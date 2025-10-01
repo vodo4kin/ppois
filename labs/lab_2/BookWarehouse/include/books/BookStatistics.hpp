@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 
 class BookStatistics {
@@ -13,7 +14,6 @@ private:
     bool isValidSalesCount(int sales) const;
     bool isValidRating(double rating) const;
     bool isValidReviewCount(int reviews) const;
-    bool isValidDate(const std::string& date) const;
 public:
     BookStatistics(int viewCount = 0, int salesCount = 0, 
                    double averageRating = 0.0, int reviewCount = 0,

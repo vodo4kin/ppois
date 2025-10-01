@@ -22,32 +22,34 @@ std::string ISBN::normalizeISBN(const std::string& str) const{
     return result;
 }
 
-char ISBN::calculateCheckDigit(const std::string& str) const{
+char ISBN::calculateCheckDigit(const std::string& str) const {
     bool isThirteen = (str.length() == 13);
     int sum = 0;
+    
     if (isThirteen) {
         for (size_t i = 0; i < 12; ++i) {
             int digit = str[i] - '0';
             int weight = (i % 2 == 0) ? 1 : 3;
             sum += digit * weight;
         }
+        int checkDigit = (10 - (sum % 10)) % 10;
+        return '0' + checkDigit;
     } 
-    else {
+    else { // ISBN-10
         for (size_t i = 0; i < 9; ++i) {
-            int digit = str[i] - '0';
+            int digit;
+            if (str[i] == 'X' || str[i] == 'x') {
+                digit = 10; // 'X' представляет 10
+            } else {
+                digit = str[i] - '0';
+            }
             sum += digit * (10 - i);
         }
+        int remainder = sum % 11;
+        int checkDigit = (remainder == 0) ? 0 : 11 - remainder;
+        
+        return (checkDigit == 10) ? 'X' : ('0' + checkDigit);
     }
-
-    int remainder = sum % (isThirteen ? 10 : 11);
-    int checkDigit = (remainder == 0) ? 0 : 
-                    (isThirteen ? 10 - remainder : 11 - remainder);
-    
-    if (!isThirteen && checkDigit == 10) {
-        return 'X';
-    }
-    
-    return '0' + checkDigit;
 }
 
 

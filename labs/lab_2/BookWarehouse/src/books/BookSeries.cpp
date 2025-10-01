@@ -1,16 +1,9 @@
 #include "books/BookSeries.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "utils/Utils.hpp"
 
 bool BookSeries::isValidName(const std::string& name) const {
-    if (name.length() == 0 || name.length() > MAX_NAME_LENGTH) {
-        return false;
-    }
-    bool hasNonSpace = false;
-    for (char c : name) {
-        if (c == '\t' || c == '\n' || c == '\r') return false;
-        if (c != ' ') hasNonSpace = true;
-    }
-    return hasNonSpace;
+    return StringValidation::isValidName(name, MAX_NAME_LENGTH);
 }
 
 bool BookSeries::isValidDescription(const std::string& desc) const {
