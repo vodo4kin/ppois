@@ -31,7 +31,7 @@ BookMetadata::BookMetadata(int publicationYear, const std::string& language,
         throw DataValidationException("Description too long");
     }
     this->publicationYear = publicationYear;
-    this->language = newLanguage;  // Уже нормализованный
+    this->language = newLanguage; 
     this->edition = edition;
     this->description = description;
 }

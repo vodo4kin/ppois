@@ -136,14 +136,9 @@ void BookStatistics::updateRating(double newRating) {
     if (!isValidRating(newRating)) {
         throw DataValidationException("Invalid rating: " + std::to_string(newRating));
     }
-    if (reviewCount == 0) {
-        averageRating = newRating;
-        reviewCount = 1;
-    } else {
-        double totalRating = averageRating * reviewCount + newRating;
-        reviewCount++;
-        averageRating = totalRating / reviewCount;
-    }
+    double totalRating = averageRating * reviewCount + newRating;
+    reviewCount++;
+    averageRating = totalRating / reviewCount;
 }
 
 double BookStatistics::getPopularityScore() const noexcept {

@@ -18,7 +18,9 @@ Book::Book(const ISBN& isbn, const BookTitle& title, const BookMetadata& metadat
          double price, int stockQuantity, std::shared_ptr<BookSeries> series)
     : isbn(isbn), title(title), metadata(metadata), physicalProps(physicalProps),
       genre(genre), publisher(publisher), condition(condition), series(series),
-      price(price), stockQuantity(stockQuantity) {
+      price(price), stockQuantity(stockQuantity),
+      statistics(0, 0, 0.0, 0, "2024-01-01")
+{
     if (price < 0) {
         throw DataValidationException("Price cannot be negative: " + std::to_string(price));
     }
@@ -101,8 +103,6 @@ void Book::addReview(std::shared_ptr<BookReview> review) {
         throw DataValidationException("Review cannot be null");
     }
     reviews.push_back(review);
-    // обновляем статистику
-    statistics.incrementReviews();
     statistics.updateRating(review->getRating());
 }
 
@@ -169,7 +169,7 @@ void Book::updateStock(int delta) {
     stockQuantity = newQuantity;
     if (delta < 0) {
         statistics.incrementSales(-delta);
-        statistics.setLastSaleDate(getCurrentDate()); // временная заглушка
+        statistics.setLastSaleDate(getCurrentDate());
     }
 }
 
