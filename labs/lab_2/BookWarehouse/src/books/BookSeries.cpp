@@ -1,13 +1,14 @@
 #include "books/BookSeries.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 
 bool BookSeries::isValidName(const std::string& name) const {
-    return StringValidation::isValidName(name, MAX_NAME_LENGTH);
+    return StringValidation::isValidName(name, BookConfig::BookSeries::MAX_NAME_LENGTH);
 }
 
 bool BookSeries::isValidDescription(const std::string& desc) const {
-    return desc.length() <= MAX_DESCRIPTION_LENGTH;
+    return desc.length() <= BookConfig::BookSeries::MAX_DESCRIPTION_LENGTH;
 }
 
 bool BookSeries::isValidYear(int year) const {

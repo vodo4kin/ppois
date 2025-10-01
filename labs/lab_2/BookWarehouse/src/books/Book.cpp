@@ -137,7 +137,6 @@ double Book::getAverageRating() const noexcept {
     return statistics.getAverageRating();
 }
 
-// бизнес-логика
 bool Book::isInStock() const noexcept {
     return stockQuantity > 0;
 }
@@ -173,7 +172,6 @@ void Book::updateStock(int delta) {
     }
 }
 
-// инфа
 std::string Book::getFullInfo() const noexcept {
     std::string info = "Book: " + title.getFullTitle() + "\n";
     info += "ISBN: " + isbn.getFormattedCode() + "\n";

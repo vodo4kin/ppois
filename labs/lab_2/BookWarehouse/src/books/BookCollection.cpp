@@ -2,17 +2,18 @@
 #include "exceptions/WarehouseExceptions.hpp"
 #include <algorithm>
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 
 bool BookCollection::isValidName(const std::string& name) const {
-    return StringValidation::isValidName(name, MAX_NAME_LENGTH);
+    return StringValidation::isValidName(name, BookConfig::BookCollection::MAX_NAME_LENGTH);
 }
 
 bool BookCollection::isValidDescription(const std::string& desc) const {
-    return desc.length() <= MAX_DESCRIPTION_LENGTH;
+    return desc.length() <= BookConfig::BookCollection::MAX_DESCRIPTION_LENGTH;
 }
 
 bool BookCollection::isValidCategory(const std::string& category) const {
-    return StringValidation::isValidName(category, MAX_NAME_LENGTH);
+    return StringValidation::isValidName(category, BookConfig::BookCollection::MAX_NAME_LENGTH);
 }
 
 BookCollection::BookCollection(const std::string& name, const std::string& description,

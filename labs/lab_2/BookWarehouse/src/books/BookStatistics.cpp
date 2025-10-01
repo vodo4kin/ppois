@@ -1,14 +1,15 @@
 #include "books/BookStatistics.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 #include <cmath>
 
 bool BookStatistics::isValidViewCount(int views) const {
-    return views >= 0 && views <= MAX_VIEWS;
+    return views >= 0 && views <= BookConfig::BookStatistics::MAX_VIEWS;
 }
 
 bool BookStatistics::isValidSalesCount(int sales) const {
-    return sales >= 0 && sales <= MAX_SALES;
+    return sales >= 0 && sales <= BookConfig::BookStatistics::MAX_SALES;
 }
 
 bool BookStatistics::isValidRating(double rating) const {
@@ -143,9 +144,9 @@ void BookStatistics::updateRating(double newRating) {
 
 double BookStatistics::getPopularityScore() const noexcept {
     // 40% продажи + 30% просмотры + 30% рейтинг
-    double salesScore = static_cast<double>(salesCount) / MAX_SALES * 100.0;
-    double viewsScore = static_cast<double>(viewCount) / MAX_VIEWS * 100.0;
-    double ratingScore = averageRating * 20.0; // 5.0 → 100
+    double salesScore = static_cast<double>(salesCount) / BookConfig::BookStatistics::MAX_SALES * 100.0;
+    double viewsScore = static_cast<double>(viewCount) / BookConfig::BookStatistics::MAX_VIEWS * 100.0;
+    double ratingScore = averageRating * 20.0;
     
     return (salesScore * 0.4) + (viewsScore * 0.3) + (ratingScore * 0.3);
 }
@@ -161,7 +162,7 @@ bool BookStatistics::isHighlyRated() const noexcept {
 bool BookStatistics::operator==(const BookStatistics& other) const noexcept {
     return viewCount == other.viewCount &&
            salesCount == other.salesCount &&
-           std::abs(averageRating - other.averageRating) < 0.001 && // Погрешность для double
+           std::abs(averageRating - other.averageRating) < 0.001 &&
            reviewCount == other.reviewCount &&
            lastSaleDate == other.lastSaleDate;
 }

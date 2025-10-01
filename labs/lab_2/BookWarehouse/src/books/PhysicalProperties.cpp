@@ -1,22 +1,22 @@
 #include "books/PhysicalProperties.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 
 bool PhysicalProperties::isValidWeight(int weight) const {
-    return weight > 0 && weight <= MAX_WEIGHT;
+    return weight > 0 && weight <= BookConfig::PhysicalProperties::MAX_WEIGHT;
 }
 
 bool PhysicalProperties::isValidDimension(int dimension) const {
-    return dimension > 0 && dimension <= MAX_DIMENSION;
+    return dimension > 0 && dimension <= BookConfig::PhysicalProperties::MAX_DIMENSION;
 }
 
 bool PhysicalProperties::isValidPageCount(int pages) const {
-    return pages > 0 && pages <= MAX_PAGES;
+    return pages > 0 && pages <= BookConfig::PhysicalProperties::MAX_PAGES;
 }
 
 PhysicalProperties::PhysicalProperties(int weight, int height, int width, 
     int thickness, int pageCount, CoverType coverType, const std::string& material) {
-    
     if (!isValidWeight(weight)) {
         throw DataValidationException("Invalid weight: " + std::to_string(weight) + "g");
     }
@@ -35,7 +35,6 @@ PhysicalProperties::PhysicalProperties(int weight, int height, int width,
     if (!StringValidation::isValidName(material)) {
         throw DataValidationException("Invalid material: '" + material + "'");
     }
-    
     this->weight = weight;
     this->height = height;
     this->width = width;
@@ -74,14 +73,13 @@ std::string PhysicalProperties::getMaterial() const noexcept {
 }
 
 double PhysicalProperties::getVolume() const noexcept {
-    // Объем в см³ (переводим мм в см)
     return (height / 10.0) * (width / 10.0) * (thickness / 10.0);
 }
 
 double PhysicalProperties::getDensity() const noexcept {
     double volume = getVolume();
     if (volume == 0) return 0;
-    return weight / volume; // г/см³
+    return weight / volume;
 }
 
 std::string PhysicalProperties::getCoverTypeString() const noexcept {

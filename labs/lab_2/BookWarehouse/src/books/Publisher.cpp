@@ -1,9 +1,10 @@
 #include "books/Publisher.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 
 bool Publisher::isValidName(const std::string& name) const{
-    return StringValidation::isValidName(name, MAX_NAME_LENGTH);
+    return StringValidation::isValidName(name, BookConfig::Publisher::MAX_NAME_LENGTH);
 }
 
 bool Publisher::isValidEmail(const std::string& email) const {
@@ -16,7 +17,7 @@ bool Publisher::isValidEmail(const std::string& email) const {
 }
 
 bool Publisher::isValidYear(int year) const{
-    return year >=1400 && year <= YEAR;
+    return year >=1400 && year <= BookConfig::Publisher::YEAR;
 }
 
 Publisher::Publisher(const std::string& name, const std::string& contactEmail, int foundationYear) {
@@ -29,7 +30,6 @@ Publisher::Publisher(const std::string& name, const std::string& contactEmail, i
     if (!isValidYear(foundationYear)) {
         throw DataValidationException("Invalid foundation year: " + std::to_string(foundationYear));
     }
-    
     this->name = name;
     this->contactEmail = contactEmail;
     this->foundationYear = foundationYear;

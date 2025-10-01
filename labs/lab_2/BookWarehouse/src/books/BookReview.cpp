@@ -1,22 +1,23 @@
 #include "books/BookReview.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 #include <cctype>
 
 bool BookReview::isValidAuthor(const std::string& author) const {
-    return StringValidation::isValidName(author, MAX_AUTHOR_LENGTH);
+    return StringValidation::isValidName(author, BookConfig::BookReview::MAX_AUTHOR_LENGTH);
 }
 
 bool BookReview::isValidTitle(const std::string& title) const {
-    return StringValidation::isValidName(title, MAX_TITLE_LENGTH);
+    return StringValidation::isValidName(title, BookConfig::BookReview::MAX_TITLE_LENGTH);
 }
 
 bool BookReview::isValidText(const std::string& text) const {
-    return StringValidation::isValidName(text, MAX_TEXT_LENGTH);
+    return StringValidation::isValidName(text, BookConfig::BookReview::MAX_TEXT_LENGTH);
 }
 
 bool BookReview::isValidRating(int rating) const {
-    return rating >= MIN_RATING && rating <= MAX_RATING;
+    return rating >= BookConfig::BookReview::MIN_RATING && rating <= BookConfig::BookReview::MAX_RATING;
 }
 
 BookReview::BookReview(const std::string& author, const std::string& title, 
@@ -65,7 +66,7 @@ std::string BookReview::getDate() const noexcept {
 
 std::string BookReview::getRatingStars() const noexcept {
     std::string stars;
-    for (int i = 1; i <= MAX_RATING; i++) {
+    for (int i = 1; i <= BookConfig::BookReview::MAX_RATING; i++) {
         stars += (i <= rating) ? "★" : "☆";
     }
     return stars;

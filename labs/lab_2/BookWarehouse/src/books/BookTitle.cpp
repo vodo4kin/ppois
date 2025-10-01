@@ -1,9 +1,10 @@
 #include "books/BookTitle.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 
 bool BookTitle::isValidTitle(const std::string& title) const{
-    if (title.length() < MIN_LENGTH || title.length() > MAX_LENGTH) return false;
+    if (title.length() < BookConfig::BookTitle::MIN_LENGTH || title.length() > BookConfig::BookTitle::MAX_LENGTH) return false;
     bool hasNonSpace = false;
     for(char c : title){
         if(c == '\t' || c == '\n' || c == '\r') return false;

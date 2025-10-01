@@ -1,9 +1,10 @@
 #include "books/BookMetadata.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
+#include "config/BookConfig.hpp"
 
 bool BookMetadata::isValidYear(int year) const {
-    return year >= MIN_YEAR && year <= MAX_YEAR;
+    return year >= BookConfig::BookMetadata::MIN_YEAR && year <= BookConfig::BookMetadata::MAX_YEAR;
 }
 
 bool BookMetadata::isValidEdition(int edition) const {
@@ -11,7 +12,7 @@ bool BookMetadata::isValidEdition(int edition) const {
 }
 
 bool BookMetadata::isValidDescription(const std::string& desc) const {
-    return desc.length() <= MAX_DESCRIPTION_LENGTH;
+    return desc.length() <= BookConfig::BookMetadata::MAX_DESCRIPTION_LENGTH;
 }
 
 BookMetadata::BookMetadata(int publicationYear, const std::string& language, 
