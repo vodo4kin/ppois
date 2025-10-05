@@ -1,31 +1,25 @@
 #include "books/Book.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
+#include "books/BookStatistics.hpp"
+#include "utils/Utils.hpp"
 #include <algorithm>
 #include <chrono>
 #include <iomanip>
 
 std::string Book::getCurrentDate() {
-    auto now = std::chrono::system_clock::now();
-    std::time_t time = std::chrono::system_clock::to_time_t(now);
-    std::stringstream ss;
-    ss << std::put_time(std::localtime(&time), "%Y-%m-%d");
-    return ss.str();
+    return DateUtils::getCurrentDate();  // ✅ Убираем дублирование
 }
 
 Book::Book(const ISBN& isbn, const BookTitle& title, const BookMetadata& metadata,
          const PhysicalProperties& physicalProps, const Genre& genre,
          std::shared_ptr<Publisher> publisher, const BookCondition& condition,
-         double price, int stockQuantity, std::shared_ptr<BookSeries> series)
+         double price, std::shared_ptr<BookSeries> series)
     : isbn(isbn), title(title), metadata(metadata), physicalProps(physicalProps),
       genre(genre), publisher(publisher), condition(condition), series(series),
-      price(price), stockQuantity(stockQuantity),
-      statistics(0, 0, 0.0, 0, "2024-01-01")
+      price(price), statistics(0, 0, 0.0, 0, "2024-01-01")
 {
     if (price < 0) {
         throw DataValidationException("Price cannot be negative: " + std::to_string(price));
-    }
-    if (stockQuantity < 0) {
-        throw DataValidationException("Stock quantity cannot be negative: " + std::to_string(stockQuantity));
     }
     if (!publisher) {
         throw DataValidationException("Publisher cannot be null");
@@ -68,10 +62,6 @@ double Book::getPrice() const noexcept {
     return price;
 }
 
-int Book::getStockQuantity() const noexcept {
-    return stockQuantity;
-}
-
 BookStatistics Book::getStatistics() const noexcept {
     return statistics;
 }
@@ -81,13 +71,6 @@ void Book::setPrice(double newPrice) {
         throw DataValidationException("Price cannot be negative: " + std::to_string(newPrice));
     }
     price = newPrice;
-}
-
-void Book::setStockQuantity(int quantity) {
-    if (quantity < 0) {
-        throw DataValidationException("Stock quantity cannot be negative: " + std::to_string(quantity));
-    }
-    stockQuantity = quantity;
 }
 
 void Book::setSeries(std::shared_ptr<BookSeries> newSeries) {
@@ -110,18 +93,8 @@ void Book::removeReview(std::shared_ptr<BookReview> review) {
     if (!review) return;
     auto it = std::find(reviews.begin(), reviews.end(), review);
     if (it != reviews.end()) {
+        statistics.removeRating(review->getRating());
         reviews.erase(it);
-        if (reviews.empty()) {
-            statistics.setAverageRating(0.0);
-            statistics.setReviewCount(0);
-        } else {
-            double totalRating = 0.0;
-            for (const auto& rev : reviews) {
-                totalRating += rev->getRating();
-            }
-            statistics.setAverageRating(totalRating / reviews.size());
-            statistics.setReviewCount(reviews.size());
-        }
     }
 }
 
@@ -135,10 +108,6 @@ size_t Book::getReviewCount() const noexcept {
 
 double Book::getAverageRating() const noexcept {
     return statistics.getAverageRating();
-}
-
-bool Book::isInStock() const noexcept {
-    return stockQuantity > 0;
 }
 
 bool Book::isBestseller() const noexcept {
@@ -156,22 +125,6 @@ void Book::applyDiscount(double percent) {
     price = price * (100 - percent) / 100;
 }
 
-void Book::updateStock(int delta) {
-    int newQuantity = stockQuantity + delta;
-    if (newQuantity < 0) {
-        throw InsufficientStockException(
-            "Cannot reduce stock by " + std::to_string(-delta) + 
-            ". Current stock: " + std::to_string(stockQuantity) +
-            " for book: " + title.getFullTitle()
-        );
-    }
-    stockQuantity = newQuantity;
-    if (delta < 0) {
-        statistics.incrementSales(-delta);
-        statistics.setLastSaleDate(getCurrentDate());
-    }
-}
-
 std::string Book::getFullInfo() const noexcept {
     std::string info = "Book: " + title.getFullTitle() + "\n";
     info += "ISBN: " + isbn.getFormattedCode() + "\n";
@@ -179,7 +132,6 @@ std::string Book::getFullInfo() const noexcept {
     info += "Publisher: " + publisher->getName() + "\n";
     info += "Condition: " + condition.toString() + "\n";
     info += "Price: $" + std::to_string(price) + "\n";
-    info += "Stock: " + std::to_string(stockQuantity) + " units\n";
     info += "Rating: " + std::to_string(statistics.getAverageRating()) + "/5.0";
     if (series) {
         info += "\nSeries: " + series->getName();
@@ -189,7 +141,7 @@ std::string Book::getFullInfo() const noexcept {
 
 std::string Book::getShortInfo() const noexcept {
     return title.getFullTitle() + " (" + isbn.getFormattedCode() + ") - $" + 
-           std::to_string(price) + " [" + std::to_string(stockQuantity) + " in stock]";
+           std::to_string(price);
 }
 
 bool Book::operator==(const Book& other) const noexcept {

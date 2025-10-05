@@ -4,6 +4,7 @@
 #include "config/BookConfig.hpp"
 #include <cmath>
 
+
 bool BookStatistics::isValidViewCount(int views) const {
     return views >= 0 && views <= BookConfig::BookStatistics::MAX_VIEWS;
 }
@@ -20,11 +21,27 @@ bool BookStatistics::isValidReviewCount(int reviews) const {
     return reviews >= 0;
 }
 
+void BookStatistics::removeRating(double rating) {
+    if (reviewCount <= 0) {
+        setAverageRating(0.0);
+        setReviewCount(0);
+        return;
+    }
+    double totalRating = averageRating * reviewCount;
+    totalRating -= rating;
+    reviewCount--;
+    if (reviewCount > 0) {
+        averageRating = totalRating / reviewCount;
+    } else {
+        averageRating = 0.0;
+    }
+}
+
 BookStatistics::BookStatistics(int viewCount, int salesCount, 
-                   double averageRating, int reviewCount,
-                   const std::string& lastSaleDate) {
-    if (!isValidViewCount(viewCount)) {
-        throw DataValidationException("Invalid view count: " + std::to_string(viewCount));
+    double averageRating, int reviewCount,
+    const std::string& lastSaleDate) {
+        if (!isValidViewCount(viewCount)) {
+            throw DataValidationException("Invalid view count: " + std::to_string(viewCount));
     }
     if (!isValidSalesCount(salesCount)) {
         throw DataValidationException("Invalid sales count: " + std::to_string(salesCount));

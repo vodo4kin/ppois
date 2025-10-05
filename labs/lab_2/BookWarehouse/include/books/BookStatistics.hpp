@@ -25,7 +25,7 @@ private:
     double averageRating;   ///< Average rating (0.0-5.0)
     int reviewCount;        ///< Number of reviews
     std::string lastSaleDate; ///< Date of last sale
-
+    
     /**
      * @brief Private method to validate view count
      * 
@@ -67,6 +67,13 @@ private:
     bool isValidReviewCount(int reviews) const;
 
 public:
+    /**
+     * @brief Remove rating and update statistics
+     * 
+     * @param rating double value containing rating to remove
+     */
+    void removeRating(double rating);
+
     /**
      * @brief Construct a new BookStatistics object
      * 

@@ -43,7 +43,6 @@ private:
     std::vector<std::shared_ptr<BookReview>> reviews; ///< Collection of reviews
     BookStatistics statistics;                      ///< Statistical data
     double price;                                   ///< Current price
-    int stockQuantity;                              ///< Quantity in stock
 
     /**
      * @brief Private method to get current date
@@ -70,8 +69,7 @@ public:
     Book(const ISBN& isbn, const BookTitle& title, const BookMetadata& metadata,
          const PhysicalProperties& physicalProps, const Genre& genre,
          std::shared_ptr<Publisher> publisher, const BookCondition& condition,
-         double price, int stockQuantity = 0,
-         std::shared_ptr<BookSeries> series = nullptr);
+         double price, std::shared_ptr<BookSeries> series = nullptr);
 
     /**
      * @brief Get the ISBN
@@ -137,13 +135,6 @@ public:
     double getPrice() const noexcept;
 
     /**
-     * @brief Get the stock quantity
-     * 
-     * @return int containing stock quantity
-     */
-    int getStockQuantity() const noexcept;
-
-    /**
      * @brief Get the statistics
      * 
      * @return BookStatistics containing book statistics
@@ -156,13 +147,6 @@ public:
      * @param newPrice double value containing new price
      */
     void setPrice(double newPrice);
-
-    /**
-     * @brief Set the stock quantity
-     * 
-     * @param quantity integer value containing new stock quantity
-     */
-    void setStockQuantity(int quantity);
 
     /**
      * @brief Set the series information
@@ -214,14 +198,6 @@ public:
     double getAverageRating() const noexcept;
 
     /**
-     * @brief Check if book is in stock
-     * 
-     * @return true if book is in stock
-     * @return false if book is not in stock
-     */
-    bool isInStock() const noexcept;
-
-    /**
      * @brief Check if book is bestseller
      * 
      * @return true if book is bestseller
@@ -243,13 +219,6 @@ public:
      * @param percent double value containing discount percentage
      */
     void applyDiscount(double percent);
-
-    /**
-     * @brief Update stock quantity
-     * 
-     * @param delta integer value containing stock change (positive for addition, negative for sales)
-     */
-    void updateStock(int delta);
 
     /**
      * @brief Get full book information
