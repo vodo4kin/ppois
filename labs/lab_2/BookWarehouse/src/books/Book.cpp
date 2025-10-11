@@ -7,7 +7,7 @@
 #include <iomanip>
 
 std::string Book::getCurrentDate() {
-    return DateUtils::getCurrentDate();  // ✅ Убираем дублирование
+    return DateUtils::getCurrentDate();
 }
 
 Book::Book(const ISBN& isbn, const BookTitle& title, const BookMetadata& metadata,
