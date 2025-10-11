@@ -3,7 +3,7 @@
  * @author George (BSUIR, Gr.421702)
  * @brief Header file of the Address class for working with physical addresses
  * @version 0.1
- * @date 2025-10-04
+ * @date 2025-10-11
  * 
  * 
  */
