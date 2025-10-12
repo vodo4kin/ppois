@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <memory>
-
 #include "books/Book.hpp"
 #include "books/ISBN.hpp"
 #include "books/BookTitle.hpp"

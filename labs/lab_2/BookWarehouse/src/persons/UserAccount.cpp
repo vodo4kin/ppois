@@ -2,7 +2,6 @@
 #include "utils/Utils.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "config/PersonConfig.hpp"
-#include <ctime>
 
 bool UserAccount::isValidUsername(const std::string& username) const {
     if (username.empty() || username.length() < PersonConfig::UserAccount::MIN_USERNAME_LENGTH || 

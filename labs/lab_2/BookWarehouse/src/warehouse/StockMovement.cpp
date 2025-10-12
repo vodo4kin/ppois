@@ -1,9 +1,6 @@
 #include "warehouse/StockMovement.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
-#include "config/WarehouseConfig.hpp"
 #include "utils/Utils.hpp"
-#include "warehouse/Warehouse.hpp"
-#include "warehouse/InventoryItem.hpp"
 #include <regex>
 
 bool StockMovement::isValidMovementId(const std::string& movementId) const {

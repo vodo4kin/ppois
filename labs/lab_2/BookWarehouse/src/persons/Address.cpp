@@ -34,7 +34,6 @@ Address::Address(const std::string& street, const std::string& city,
     if (!isValidCountry(country)) {
         throw DataValidationException("Invalid country: " + country);
     }
-    
     this->street = street;
     this->city = city;
     this->postalCode = postalCode;

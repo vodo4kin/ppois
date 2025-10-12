@@ -2,7 +2,6 @@
 #include "exceptions/WarehouseExceptions.hpp"
 #include "config/WarehouseConfig.hpp"
 #include "utils/Utils.hpp"
-#include <algorithm>
 #include <regex>
 
 bool Delivery::isValidDeliveryId(const std::string& deliveryId) const {
@@ -162,13 +161,13 @@ void Delivery::completeDelivery() {
     if (status != DeliveryStatus::ARRIVED && status != DeliveryStatus::UNLOADING) {
         throw WarehouseException("Cannot complete delivery that has not arrived");
     }
-    
     if (books.empty()) {
         throw WarehouseException("Cannot complete delivery with no books");
     }
+    if (!stockReceipt) {
+        throw WarehouseException("Stock receipt must be set before completing delivery. Use setStockReceipt() first.");
+    }
     status = DeliveryStatus::COMPLETED;
-    // логика создания StockReceipt через WarehouseManager
-    // пока просто устанавливаем статус COMPLETED
 }
 
 std::string Delivery::getInfo() const noexcept {

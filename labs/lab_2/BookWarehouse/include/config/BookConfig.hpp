@@ -58,6 +58,7 @@ namespace BookConfig {
     namespace BookSeries {
         static constexpr size_t MAX_NAME_LENGTH = 100;        ///< Maximum allowed series name length
         static constexpr size_t MAX_DESCRIPTION_LENGTH = 500; ///< Maximum allowed series description length
+        static constexpr size_t YEAR = 2025;                  ///< YEAR
     }
 
     /**

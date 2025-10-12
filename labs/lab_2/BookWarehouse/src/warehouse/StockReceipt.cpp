@@ -3,8 +3,6 @@
 #include "config/WarehouseConfig.hpp"
 #include "utils/Utils.hpp"
 #include "warehouse/Warehouse.hpp"
-#include "warehouse/InventoryItem.hpp"
-#include <algorithm>
 #include <regex>
 
 bool StockReceipt::isValidSupplierName(const std::string& supplierName) const {

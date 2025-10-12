@@ -3,8 +3,6 @@
 #include "books/BookStatistics.hpp"
 #include "utils/Utils.hpp"
 #include <algorithm>
-#include <chrono>
-#include <iomanip>
 
 std::string Book::getCurrentDate() {
     return DateUtils::getCurrentDate();
@@ -16,8 +14,7 @@ Book::Book(const ISBN& isbn, const BookTitle& title, const BookMetadata& metadat
          double price, std::shared_ptr<BookSeries> series)
     : isbn(isbn), title(title), metadata(metadata), physicalProps(physicalProps),
       genre(genre), publisher(publisher), condition(condition), series(series),
-      price(price), statistics(0, 0, 0.0, 0, "2024-01-01")
-{
+      price(price), statistics(0, 0, 0.0, 0, "2024-01-01") {
     if (price < 0) {
         throw DataValidationException("Price cannot be negative: " + std::to_string(price));
     }

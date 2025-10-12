@@ -9,7 +9,6 @@
 #include "orders/PurchaseOrder.hpp"
 #include "orders/OrderManager.hpp"
 
-// ==================== ORDERS MODULE TESTS ====================
 // ==================== OrderStatus Tests ====================
 TEST(OrderStatusTest, ValidStatusTransitions) {
     OrderStatus status(OrderStatus::Status::PENDING, "2024-01-15");

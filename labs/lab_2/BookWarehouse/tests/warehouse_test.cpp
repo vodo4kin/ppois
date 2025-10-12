@@ -14,7 +14,6 @@
 #include "warehouse/WarehouseManager.hpp"
 #include "warehouse/WarehouseSection.hpp"
 
-// ==================== WAREHOUSE MODULE TESTS ====================
 // ==================== StorageLocation Tests ====================
 TEST(StorageLocationTest, ValidLocation) {
     EXPECT_NO_THROW(StorageLocation location("A-01-B-05", 100, 0, StorageLocation::LocationStatus::FREE));

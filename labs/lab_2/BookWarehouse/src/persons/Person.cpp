@@ -31,7 +31,6 @@ Person::Person(const std::string& id, const std::string& firstName, const std::s
     if (!isValidDateOfBirth(dateOfBirth)) {
         throw DataValidationException("Invalid date of birth: " + dateOfBirth);
     }
-    
     this->id = id;
     this->firstName = firstName;
     this->lastName = lastName;
@@ -105,15 +104,12 @@ std::string Person::getInfo() const noexcept {
     std::string info = "ID: " + id + 
                       ", Name: " + getFullName() + 
                       ", Age: " + std::to_string(calculateAge());
-    
     if (address) {
         info += ", Address: " + address->getFullAddress();
     }
-    
     if (contactInfo) {
         info += ", Contact: " + contactInfo->getPrimaryContact();
     }
-    
     return info;
 }
 

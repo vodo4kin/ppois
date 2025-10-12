@@ -2,7 +2,6 @@
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
 #include "config/BookConfig.hpp"
-#include <cctype>
 
 bool BookReview::isValidAuthor(const std::string& author) const {
     return StringValidation::isValidName(author, BookConfig::BookReview::MAX_AUTHOR_LENGTH);

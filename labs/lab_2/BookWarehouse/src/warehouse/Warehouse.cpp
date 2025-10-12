@@ -106,8 +106,6 @@ void Warehouse::addInventoryItem(std::shared_ptr<InventoryItem> inventoryItem) {
     if (!location) {
         throw DataValidationException("Inventory item has no valid location");
     }
-    
-    // Обновляем нагрузку в location
     location->addBooks(inventoryItem->getQuantity());
     
     auto existing = findInventoryItem(
@@ -115,7 +113,6 @@ void Warehouse::addInventoryItem(std::shared_ptr<InventoryItem> inventoryItem) {
         location->getLocationId()
     );
     if (existing) {
-        // Откатываем изменения в location
         location->removeBooks(inventoryItem->getQuantity());
         throw DataValidationException("Inventory item already exists for book " + 
                                     inventoryItem->getBook()->getISBN().getCode() + 
@@ -131,7 +128,6 @@ void Warehouse::removeInventoryItem(const std::string& bookIsbn, const std::stri
                    item->getLocation()->getLocationId() == locationId;
         });
     if (it != inventory.end()) {
-        // Уменьшаем нагрузку в location
         auto location = (*it)->getLocation();
         if (location) {
             location->removeBooks((*it)->getQuantity());

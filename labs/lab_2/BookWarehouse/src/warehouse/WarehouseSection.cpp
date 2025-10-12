@@ -2,7 +2,6 @@
 #include "exceptions/WarehouseExceptions.hpp"
 #include "config/WarehouseConfig.hpp"
 #include "utils/Utils.hpp"
-#include <algorithm>
 #include <regex>
 
 bool WarehouseSection::isValidSectionId(const std::string& sectionId) const {

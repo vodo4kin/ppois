@@ -10,7 +10,6 @@
 #include "persons/Employee.hpp"
 #include "persons/UserAccount.hpp"
 
-// ==================== PERSONS MODULE TESTS ====================
 // ==================== Address Tests ====================
 TEST(AddressTest, ValidAddress) {
     EXPECT_NO_THROW(Address addr("123 Main St", "Springfield", "12345", "USA"));

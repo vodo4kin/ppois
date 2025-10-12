@@ -28,7 +28,6 @@ Customer::Customer(const std::string& personId, const std::string& firstName, co
     if (!StringValidation::isValidDate(registrationDate)) {
         throw DataValidationException("Invalid registration date: " + registrationDate);
     }
-    
     this->customerId = customerId;
     this->registrationDate = registrationDate;
     this->totalPurchases = 0.0;

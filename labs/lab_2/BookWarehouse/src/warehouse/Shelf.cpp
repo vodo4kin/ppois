@@ -1,7 +1,6 @@
 #include "warehouse/Shelf.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "config/WarehouseConfig.hpp"
-#include <algorithm>
 #include <regex>
 
 bool Shelf::isValidShelfId(const std::string& shelfId) const {
@@ -21,7 +20,6 @@ Shelf::Shelf(const std::string& shelfId, int maxLocations) {
     if (!isValidMaxLocations(maxLocations)) {
         throw DataValidationException("Invalid max locations: " + std::to_string(maxLocations));
     }
-    
     this->shelfId = shelfId;
     this->maxLocations = maxLocations;
 }
@@ -52,7 +50,6 @@ void Shelf::addLocation(std::shared_ptr<StorageLocation> location) {
     if (containsLocation(location->getLocationId())) {
         throw DuplicateBookException("Location " + location->getLocationId() + " already exists on shelf " + shelfId);
     }
-    
     locations.push_back(location);
 }
 
@@ -61,7 +58,6 @@ void Shelf::removeLocation(const std::string& locationId) {
         [&locationId](const std::shared_ptr<StorageLocation>& loc) {
             return loc->getLocationId() == locationId;
         });
-    
     if (it != locations.end()) {
         locations.erase(it);
     }
@@ -72,7 +68,6 @@ std::shared_ptr<StorageLocation> Shelf::findLocation(const std::string& location
         [&locationId](const std::shared_ptr<StorageLocation>& loc) {
             return loc->getLocationId() == locationId;
         });
-    
     return (it != locations.end()) ? *it : nullptr;
 }
 

@@ -1,9 +1,7 @@
 #include "warehouse/StockWriteOff.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "config/WarehouseConfig.hpp"
-#include "utils/Utils.hpp"
 #include "warehouse/Warehouse.hpp"
-#include "warehouse/InventoryItem.hpp"
 #include <algorithm>
 
 bool StockWriteOff::isValidDetailedReason(const std::string& detailedReason) const {
@@ -35,7 +33,6 @@ void StockWriteOff::execute() {
         throw WarehouseException("Cannot execute write-off that is not pending");
     }
     setStatus(MovementStatus::IN_PROGRESS);
-    
     try {
         auto warehouse = getWarehouse();
         if (!warehouse) {
@@ -62,7 +59,6 @@ void StockWriteOff::execute() {
                 );
             }
         }
-        
         setStatus(MovementStatus::COMPLETED);
     } catch (const std::exception& e) {
         setStatus(MovementStatus::CANCELLED);
@@ -84,9 +80,8 @@ void StockWriteOff::cancel() {
                     int writeOffQuantity = item->getQuantity();
                     item->increaseQuantity(writeOffQuantity);
                     location->addBooks(writeOffQuantity);
-                    
                 } catch (const std::exception& e) {
-                    // логи
+                    // don't interrupt
                 }
             }
         }

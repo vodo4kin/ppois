@@ -22,7 +22,6 @@ CustomerOrder::CustomerOrder(const std::string& orderId, const std::string& orde
                              std::shared_ptr<Customer> customer, std::shared_ptr<ShippingInfo> shipping,
                              const std::string& notes)
     : Order(orderId, orderDate, notes) {
-    
     if (!customer) {
         throw DataValidationException("Customer cannot be null");
     }

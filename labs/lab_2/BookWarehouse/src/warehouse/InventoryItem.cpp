@@ -27,7 +27,6 @@ InventoryItem::InventoryItem(std::shared_ptr<Book> book, int quantity,
     if (!isValidDate(dateAdded)) {
         throw DataValidationException("Invalid date format: " + dateAdded);
     }
-    
     this->book = book;
     this->quantity = quantity;
     this->location = location;

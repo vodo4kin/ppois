@@ -2,7 +2,6 @@
 #include "config/WarehouseConfig.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
-#include <algorithm>
 
 InventoryReport::InventoryReport(std::shared_ptr<Warehouse> warehouse) 
     : warehouse(warehouse) {

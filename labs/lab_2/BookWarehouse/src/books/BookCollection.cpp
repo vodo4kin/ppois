@@ -1,8 +1,8 @@
 #include "books/BookCollection.hpp"
 #include "exceptions/WarehouseExceptions.hpp"
-#include <algorithm>
 #include "utils/Utils.hpp"
 #include "config/BookConfig.hpp"
+#include <algorithm>
 
 bool BookCollection::isValidName(const std::string& name) const {
     return StringValidation::isValidName(name, BookConfig::BookCollection::MAX_NAME_LENGTH);

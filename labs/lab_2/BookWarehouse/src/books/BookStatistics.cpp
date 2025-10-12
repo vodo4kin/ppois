@@ -2,7 +2,6 @@
 #include "exceptions/WarehouseExceptions.hpp"
 #include "utils/Utils.hpp"
 #include "config/BookConfig.hpp"
-#include <cmath>
 
 
 bool BookStatistics::isValidViewCount(int views) const {

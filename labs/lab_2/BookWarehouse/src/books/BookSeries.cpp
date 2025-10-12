@@ -12,7 +12,7 @@ bool BookSeries::isValidDescription(const std::string& desc) const {
 }
 
 bool BookSeries::isValidYear(int year) const {
-    return year >= 0 && year <= 2025;
+    return year >= 0 && year <= BookConfig::BookSeries::YEAR;
 }
 
 bool BookSeries::isValidBookCount(int count) const {
