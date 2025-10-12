@@ -29,7 +29,6 @@ StockReceipt::StockReceipt(const std::string& movementId, const std::string& mov
                          const std::string& supplierName, const std::string& purchaseOrderNumber, 
                          const std::string& invoiceNumber, double totalCost, const std::string& notes)
     : StockMovement(movementId, MovementType::RECEIPT, movementDate, employeeId, warehouse, notes) {
-    
     if (!isValidSupplierName(supplierName)) {
         throw DataValidationException("Invalid supplier name: " + supplierName);
     }
@@ -42,7 +41,6 @@ StockReceipt::StockReceipt(const std::string& movementId, const std::string& mov
     if (!isValidTotalCost(totalCost)) {
         throw DataValidationException("Invalid total cost: " + std::to_string(totalCost));
     }
-    
     this->supplierName = supplierName;
     this->purchaseOrderNumber = purchaseOrderNumber;
     this->invoiceNumber = invoiceNumber;
@@ -69,38 +67,27 @@ void StockReceipt::execute() {
     if (getStatus() != MovementStatus::PENDING) {
         throw WarehouseException("Cannot execute receipt that is not pending");
     }
-    
     setStatus(MovementStatus::IN_PROGRESS);
-    
     try {
         auto warehouse = getWarehouse();
         if (!warehouse) {
             throw WarehouseException("Warehouse not available for receipt operation");
         }
-        
         for (const auto& item : getAffectedItems()) {
             if (!item) continue;
-            
             auto location = item->getLocation();
             if (!location) {
                 throw WarehouseException("Inventory item has no valid location");
             }
-            
             if (location->getStatus() == StorageLocation::LocationStatus::BLOCKED) {
                 throw WarehouseException("Cannot add items to blocked location: " + location->getLocationId());
             }
-            
-            // Добавляем InventoryItem в warehouse (если его еще нет)
             warehouse->addInventoryItem(item);
-            
-            // Увеличиваем quantity в InventoryItem и добавляем в location
             int receiptQuantity = item->getQuantity();
             item->increaseQuantity(receiptQuantity);
             location->addBooks(receiptQuantity);
         }
-        
         setStatus(MovementStatus::COMPLETED);
-        
     } catch (const std::exception& e) {
         setStatus(MovementStatus::CANCELLED);
         throw WarehouseException("Failed to execute receipt: " + std::string(e.what()));
@@ -111,21 +98,16 @@ void StockReceipt::cancel() {
     if (!isCancellable()) {
         throw WarehouseException("Cannot cancel receipt that is not pending or in progress");
     }
-    
     auto warehouse = getWarehouse();
     if (getStatus() == MovementStatus::IN_PROGRESS && warehouse) {
         for (const auto& item : getAffectedItems()) {
             if (!item) continue;
-            
             auto location = item->getLocation();
             if (location) {
                 try {
-                    // Уменьшаем quantity и удаляем из location
                     int receiptQuantity = item->getQuantity();
                     item->decreaseQuantity(receiptQuantity);
                     location->removeBooks(receiptQuantity);
-                    
-                    // Если quantity стало 0, удаляем InventoryItem из warehouse
                     if (item->getQuantity() == 0) {
                         warehouse->removeInventoryItem(
                             item->getBook()->getISBN().getCode(),
@@ -133,12 +115,11 @@ void StockReceipt::cancel() {
                         );
                     }
                 } catch (const std::exception& e) {
-                    // Логируем ошибку, но продолжаем откат других items
+                    // don't interrupt
                 }
             }
         }
     }
-    
     setStatus(MovementStatus::CANCELLED);
 }
 
