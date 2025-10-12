@@ -50,12 +50,13 @@ private:
      */
     bool isValidTaxAmount(double tax) const;
 
+public:
+
     /**
      * @brief Recalculate final order amount with discounts and tax
      */
     void recalculateFinalAmount();
-
-public:
+    
     /**
      * @brief Construct a new CustomerOrder object
      * 

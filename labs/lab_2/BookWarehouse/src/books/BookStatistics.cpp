@@ -110,7 +110,7 @@ void BookStatistics::setReviewCount(int reviews) {
 }
 
 void BookStatistics::setLastSaleDate(const std::string& date) {
-    if (!StringValidation::isValidDate(lastSaleDate)) {
+    if (!StringValidation::isValidDate(date)) {
         throw DataValidationException("Invalid date format: '" + lastSaleDate + "'");
     }
     lastSaleDate = date;
