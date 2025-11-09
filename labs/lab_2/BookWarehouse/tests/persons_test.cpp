@@ -1,16 +1,11 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include "exceptions/WarehouseExceptions.hpp"
-#include "persons/Person.hpp"
-#include "persons/Address.hpp"
-#include "persons/ContactInfo.hpp"
-#include "persons/CustomerCategory.hpp"
-#include "persons/EmployeeRole.hpp"
-#include "persons/Customer.hpp"
-#include "persons/Employee.hpp"
-#include "persons/UserAccount.hpp"
+#include "EmployeeRole.hpp"
+#include "Customer.hpp"
+#include "Employee.hpp"
+#include "UserAccount.hpp"
 
-// ==================== Address Tests (Extended) ====================
 TEST(AddressTest, ValidAddress) {
     EXPECT_NO_THROW(Address addr("123 Main St", "Springfield", "12345", "USA"));
     Address addr("456 Oak Ave", "Shelbyville", "67890", "Canada");
@@ -44,7 +39,6 @@ TEST(AddressTest, AddressEdgeCases) {
     EXPECT_NO_THROW(Address addr("A", "B", "1", "C"));
     Address minAddr("A", "B", "1", "C");
     EXPECT_TRUE(minAddr.isComplete());
-    
     std::string longStreet(100, 'a');
     std::string longCity(50, 'b');
     std::string longPostal(20, 'c');
@@ -56,7 +50,6 @@ TEST(AddressTest, AddressEquality) {
     Address addr1("123 St", "City", "12345", "Country");
     Address addr2("123 St", "City", "12345", "Country");
     Address addr3("456 St", "City", "12345", "Country");
-    
     EXPECT_EQ(addr1, addr2);
     EXPECT_NE(addr1, addr3);
     EXPECT_EQ(addr1, addr1);
@@ -69,7 +62,6 @@ TEST(AddressTest, AddressInfo) {
     EXPECT_NE(info.find("123 Main St"), std::string::npos);
 }
 
-// ==================== ContactInfo Tests (Extended) ====================
 TEST(ContactInfoTest, ValidContactInfo) {
     EXPECT_NO_THROW(ContactInfo info("john@test.com", "+1234567890", "john2@test.com", "+0987654321"));
     ContactInfo info("jane@test.com", "+1112223333");
@@ -103,11 +95,9 @@ TEST(ContactInfoTest, ContactEdgeCases) {
     ContactInfo emptyInfo("", "");
     EXPECT_FALSE(emptyInfo.hasValidContact());
     EXPECT_EQ(emptyInfo.getPrimaryContact(), "No contact information");
-    
     ContactInfo onlyEmail("test@test.com", "");
     EXPECT_TRUE(onlyEmail.hasEmail());
     EXPECT_FALSE(onlyEmail.hasPhoneNumber());
-    
     ContactInfo onlyPhone("", "+1234567890");
     EXPECT_FALSE(onlyPhone.hasEmail());
     EXPECT_TRUE(onlyPhone.hasPhoneNumber());
@@ -117,12 +107,10 @@ TEST(ContactInfoTest, ContactEquality) {
     ContactInfo info1("test@test.com", "+1234567890");
     ContactInfo info2("test@test.com", "+1234567890");
     ContactInfo info3("different@test.com", "+1234567890");
-    
     EXPECT_EQ(info1, info2);
     EXPECT_NE(info1, info3);
 }
 
-// ==================== CustomerCategory Tests (Extended) ====================
 TEST(CustomerCategoryTest, AllCategoryTypes) {
     CustomerCategory regular(CustomerCategory::Category::REGULAR);
     CustomerCategory silver(CustomerCategory::Category::SILVER);
@@ -130,7 +118,6 @@ TEST(CustomerCategoryTest, AllCategoryTypes) {
     CustomerCategory platinum(CustomerCategory::Category::PLATINUM);
     CustomerCategory student(CustomerCategory::Category::STUDENT);
     CustomerCategory corporate(CustomerCategory::Category::CORPORATE);
-    
     EXPECT_EQ(regular.toString(), "Regular");
     EXPECT_EQ(silver.toString(), "Silver");
     EXPECT_EQ(gold.toString(), "Gold");
@@ -144,7 +131,6 @@ TEST(CustomerCategoryTest, DiscountPercentages) {
     CustomerCategory silver(CustomerCategory::Category::SILVER);
     CustomerCategory gold(CustomerCategory::Category::GOLD);
     CustomerCategory platinum(CustomerCategory::Category::PLATINUM);
-    
     EXPECT_DOUBLE_EQ(regular.getDiscountPercentage(), 0.0);
     EXPECT_DOUBLE_EQ(silver.getDiscountPercentage(), 5.0);
     EXPECT_DOUBLE_EQ(gold.getDiscountPercentage(), 10.0);
@@ -156,17 +142,14 @@ TEST(CustomerCategoryTest, Benefits) {
     CustomerCategory gold(CustomerCategory::Category::GOLD);
     CustomerCategory platinum(CustomerCategory::Category::PLATINUM);
     CustomerCategory corporate(CustomerCategory::Category::CORPORATE);
-    
     EXPECT_FALSE(regular.hasFreeShipping());
     EXPECT_TRUE(gold.hasFreeShipping());
     EXPECT_TRUE(platinum.hasFreeShipping());
     EXPECT_TRUE(corporate.hasFreeShipping());
-    
     EXPECT_FALSE(regular.hasPrioritySupport());
     EXPECT_FALSE(gold.hasPrioritySupport());
     EXPECT_TRUE(platinum.hasPrioritySupport());
     EXPECT_TRUE(corporate.hasPrioritySupport());
-    
     EXPECT_FALSE(regular.isEligibleForLoyaltyProgram());
     EXPECT_TRUE(gold.isEligibleForLoyaltyProgram());
 }
@@ -175,14 +158,12 @@ TEST(CustomerCategoryTest, UpgradeLogic) {
     CustomerCategory regular(CustomerCategory::Category::REGULAR);
     CustomerCategory silver(CustomerCategory::Category::SILVER);
     CustomerCategory gold(CustomerCategory::Category::GOLD);
-    
     EXPECT_TRUE(regular.canUpgrade(1500.0));
     EXPECT_FALSE(regular.canUpgrade(500.0));
     EXPECT_TRUE(silver.canUpgrade(6000.0));
     EXPECT_FALSE(silver.canUpgrade(4000.0));
     EXPECT_TRUE(gold.canUpgrade(16000.0));
     EXPECT_FALSE(gold.canUpgrade(14000.0));
-    
     EXPECT_EQ(regular.getNextCategory(), CustomerCategory::Category::SILVER);
     EXPECT_EQ(silver.getNextCategory(), CustomerCategory::Category::GOLD);
     EXPECT_EQ(gold.getNextCategory(), CustomerCategory::Category::PLATINUM);
@@ -193,7 +174,6 @@ TEST(CustomerCategoryTest, UpgradeThresholds) {
     CustomerCategory silver(CustomerCategory::Category::SILVER);
     CustomerCategory gold(CustomerCategory::Category::GOLD);
     CustomerCategory platinum(CustomerCategory::Category::PLATINUM);
-    
     EXPECT_DOUBLE_EQ(regular.getUpgradeThreshold(), 1000.0);
     EXPECT_DOUBLE_EQ(silver.getUpgradeThreshold(), 5000.0);
     EXPECT_DOUBLE_EQ(gold.getUpgradeThreshold(), 15000.0);
@@ -204,12 +184,10 @@ TEST(CustomerCategoryTest, CategoryEquality) {
     CustomerCategory cat1(CustomerCategory::Category::GOLD);
     CustomerCategory cat2(CustomerCategory::Category::GOLD);
     CustomerCategory cat3(CustomerCategory::Category::SILVER);
-    
     EXPECT_EQ(cat1, cat2);
     EXPECT_NE(cat1, cat3);
 }
 
-// ==================== EmployeeRole Tests (Extended) ====================
 TEST(EmployeeRoleTest, AllRoleTypes) {
     EmployeeRole worker(EmployeeRole::Role::WAREHOUSE_WORKER);
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
@@ -219,7 +197,6 @@ TEST(EmployeeRoleTest, AllRoleTypes) {
     EmployeeRole hr(EmployeeRole::Role::HR_MANAGER);
     EmployeeRole finance(EmployeeRole::Role::FINANCE_OFFICER);
     EmployeeRole it(EmployeeRole::Role::IT_SUPPORT);
-    
     EXPECT_EQ(worker.toString(), "Warehouse Worker");
     EXPECT_EQ(manager.toString(), "Inventory Manager");
     EXPECT_EQ(cashier.toString(), "Cashier");
@@ -235,17 +212,14 @@ TEST(EmployeeRoleTest, RolePermissions) {
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     EmployeeRole cashier(EmployeeRole::Role::CASHIER);
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
-    
     EXPECT_FALSE(worker.canManageInventory());
     EXPECT_TRUE(manager.canManageInventory());
     EXPECT_FALSE(cashier.canManageInventory());
     EXPECT_TRUE(admin.canManageInventory());
-    
     EXPECT_FALSE(worker.canProcessSales());
     EXPECT_FALSE(manager.canProcessSales());
     EXPECT_TRUE(cashier.canProcessSales());
     EXPECT_TRUE(admin.canProcessSales());
-    
     EXPECT_FALSE(worker.canManageUsers());
     EXPECT_FALSE(manager.canManageUsers());
     EXPECT_FALSE(cashier.canManageUsers());
@@ -258,7 +232,6 @@ TEST(EmployeeRoleTest, AccessLevels) {
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     EmployeeRole supervisor(EmployeeRole::Role::SUPERVISOR);
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
-    
     EXPECT_EQ(worker.getAccessLevel(), 1);
     EXPECT_EQ(cashier.getAccessLevel(), 2);
     EXPECT_EQ(manager.getAccessLevel(), 3);
@@ -271,7 +244,6 @@ TEST(EmployeeRoleTest, SalaryMultipliers) {
     EmployeeRole cashier(EmployeeRole::Role::CASHIER);
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
-    
     EXPECT_DOUBLE_EQ(worker.getSalaryMultiplier(), 1.0);
     EXPECT_DOUBLE_EQ(cashier.getSalaryMultiplier(), 1.2);
     EXPECT_DOUBLE_EQ(manager.getSalaryMultiplier(), 1.5);
@@ -283,7 +255,6 @@ TEST(EmployeeRoleTest, AdditionalPermissions) {
     EmployeeRole supervisor(EmployeeRole::Role::SUPERVISOR);
     EmployeeRole hr(EmployeeRole::Role::HR_MANAGER);
     EmployeeRole it(EmployeeRole::Role::IT_SUPPORT);
-    
     EXPECT_TRUE(finance.canViewFinancialReports());
     EXPECT_TRUE(supervisor.canViewFinancialReports());
     EXPECT_TRUE(hr.canManageEmployees());
@@ -294,12 +265,10 @@ TEST(EmployeeRoleTest, RoleEquality) {
     EmployeeRole role1(EmployeeRole::Role::WAREHOUSE_WORKER);
     EmployeeRole role2(EmployeeRole::Role::WAREHOUSE_WORKER);
     EmployeeRole role3(EmployeeRole::Role::INVENTORY_MANAGER);
-    
     EXPECT_EQ(role1, role2);
     EXPECT_NE(role1, role3);
 }
 
-// ==================== Person Tests (Extended) ====================
 TEST(PersonTest, ValidPerson) {
     auto address = std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA");
     auto contact = std::make_shared<ContactInfo>("john@test.com", "+1234567890");
@@ -315,7 +284,6 @@ TEST(PersonTest, ValidPerson) {
 TEST(PersonTest, InvalidPerson) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
-    
     EXPECT_THROW(Person person("", "John", "Doe", "1990-01-01", address, contact), DataValidationException);
     EXPECT_THROW(Person person("P001", "", "Doe", "1990-01-01", address, contact), DataValidationException);
     EXPECT_THROW(Person person("P001", "John", "", "1990-01-01", address, contact), DataValidationException);
@@ -326,14 +294,12 @@ TEST(PersonTest, PersonOperations) {
     auto address = std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     Person person("P003", "Bob", "Johnson", "2000-01-01", address, contact);
-    
     person.setFirstName("Robert");
     person.setLastName("Johnsonson");
     auto newAddress = std::make_shared<Address>("456 Oak Ave", "Shelbyville", "67890", "Canada");
     person.setAddress(newAddress);
     auto newContact = std::make_shared<ContactInfo>("new@test.com", "+9999999999");
     person.setContactInfo(newContact);
-    
     EXPECT_EQ(person.getFirstName(), "Robert");
     EXPECT_EQ(person.getLastName(), "Johnsonson");
     EXPECT_EQ(person.getFullName(), "Robert Johnsonson");
@@ -344,13 +310,10 @@ TEST(PersonTest, PersonOperations) {
 TEST(PersonTest, AgeCalculations) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
-    
     Person minor("PM001", "Child", "Minor", "2010-01-01", address, contact);
     EXPECT_FALSE(minor.isAdult());
-    
     Person adult("PA001", "Adult", "Person", "2000-01-01", address, contact);
     EXPECT_TRUE(adult.isAdult());
-    
     Person newborn("PN001", "New", "Born", "2023-01-01", address, contact);
     EXPECT_FALSE(newborn.isAdult());
 }
@@ -359,7 +322,6 @@ TEST(PersonTest, PersonInfo) {
     auto address = std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     Person person("P004", "Alice", "Wonderland", "1988-03-25", address, contact);
-    
     std::string info = person.getInfo();
     EXPECT_FALSE(info.empty());
     EXPECT_NE(info.find("Alice Wonderland"), std::string::npos);
@@ -369,16 +331,13 @@ TEST(PersonTest, PersonInfo) {
 TEST(PersonTest, PersonEquality) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
-    
     Person person1("P001", "John", "Doe", "1990-01-01", address, contact);
     Person person2("P001", "Jane", "Smith", "1985-01-01", address, contact);
     Person person3("P002", "John", "Doe", "1990-01-01", address, contact);
-    
     EXPECT_EQ(person1, person2);
     EXPECT_NE(person1, person3);
 }
 
-// ==================== Customer Tests (Extended) ====================
 TEST(CustomerTest, ValidCustomer) {
     auto address = std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA");
     auto contact = std::make_shared<ContactInfo>("customer@test.com", "+1234567890");
@@ -400,7 +359,6 @@ TEST(CustomerTest, InvalidCustomer) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     CustomerCategory category(CustomerCategory::Category::REGULAR);
-    
     EXPECT_THROW(Customer customer("P001", "John", "Doe", "1990-01-01", address, contact,
                                   "", category, "2024-01-01"), DataValidationException);
     EXPECT_THROW(Customer customer("P001", "John", "Doe", "1990-01-01", address, contact,
@@ -413,21 +371,16 @@ TEST(CustomerTest, CustomerOperations) {
     CustomerCategory regular(CustomerCategory::Category::REGULAR);
     Customer customer("P001", "John", "Doe", "1990-05-15", address, contact,
                      "CUST001", regular, "2024-01-15");
-    
     customer.addPurchase(100.0);
     customer.addLoyaltyPoints(50);
     EXPECT_DOUBLE_EQ(customer.getTotalPurchases(), 100.0);
     EXPECT_EQ(customer.getLoyaltyPoints(), 150);
-    
     customer.redeemLoyaltyPoints(30);
     EXPECT_EQ(customer.getLoyaltyPoints(), 120);
-    
     EXPECT_THROW(customer.redeemLoyaltyPoints(200), InsufficientStockException);
-    
     CustomerCategory gold(CustomerCategory::Category::GOLD);
     customer.setCategory(gold);
     EXPECT_DOUBLE_EQ(customer.calculateDiscount(), 10.0);
-    
     customer.setActive(false);
     EXPECT_FALSE(customer.isCustActive());
 }
@@ -438,7 +391,6 @@ TEST(CustomerTest, PurchaseValidation) {
     CustomerCategory regular(CustomerCategory::Category::REGULAR);
     Customer customer("P001", "John", "Doe", "1990-01-01", address, contact,
                      "CUST001", regular, "2024-01-01");
-    
     EXPECT_THROW(customer.addPurchase(-100.0), DataValidationException);
     EXPECT_NO_THROW(customer.addPurchase(0.0));
     EXPECT_NO_THROW(customer.addPurchase(999999.99));
@@ -450,16 +402,12 @@ TEST(CustomerTest, CategoryUpgrade) {
     CustomerCategory regular(CustomerCategory::Category::REGULAR);
     Customer customer("P001", "John", "Doe", "1990-05-15", address, contact,
                      "CUST001", regular, "2024-01-15");
-    
     customer.addPurchase(500.0);
     EXPECT_FALSE(customer.isEligibleForUpgrade());
-    
     customer.addPurchase(600.0); // Total 1100, above 1000 threshold
     EXPECT_TRUE(customer.isEligibleForUpgrade());
-    
     customer.upgradeCategory();
     EXPECT_EQ(customer.getCategory().toString(), "Silver");
-    
     customer.addPurchase(5000.0); // Total 6100, above 5000 threshold
     customer.upgradeCategory();
     EXPECT_EQ(customer.getCategory().toString(), "Gold");
@@ -471,10 +419,8 @@ TEST(CustomerTest, CustomerInfo) {
     CustomerCategory gold(CustomerCategory::Category::GOLD);
     Customer customer("P001", "John", "Doe", "1990-05-15", address, contact,
                      "CUST001", gold, "2024-01-15");
-    
     customer.addPurchase(1500.0);
     customer.addLoyaltyPoints(100);
-    
     std::string info = customer.getInfo();
     EXPECT_FALSE(info.empty());
     EXPECT_NE(info.find("CUST001"), std::string::npos);
@@ -486,19 +432,16 @@ TEST(CustomerTest, CustomerEquality) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     CustomerCategory category(CustomerCategory::Category::REGULAR);
-    
     Customer cust1("P001", "John", "Doe", "1990-01-01", address, contact,
                   "CUST001", category, "2024-01-01");
     Customer cust2("P002", "Jane", "Smith", "1985-01-01", address, contact,
                   "CUST001", category, "2024-01-01");
     Customer cust3("P001", "John", "Doe", "1990-01-01", address, contact,
                   "CUST002", category, "2024-01-01");
-    
     EXPECT_EQ(cust1, cust2);
     EXPECT_NE(cust1, cust3);
 }
 
-// ==================== Employee Tests (Extended) ====================
 TEST(EmployeeTest, ValidEmployee) {
     auto address = std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA");
     auto contact = std::make_shared<ContactInfo>("employee@test.com", "+1234567890");
@@ -520,7 +463,6 @@ TEST(EmployeeTest, InvalidEmployee) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     EmployeeRole role(EmployeeRole::Role::WAREHOUSE_WORKER);
-    
     EXPECT_THROW(Employee employee("P001", "John", "Doe", "1990-01-01", address, contact,
                                   "", role, "2024-01-01", 30000.0, "Dept"), DataValidationException);
     EXPECT_THROW(Employee employee("P001", "John", "Doe", "1990-01-01", address, contact,
@@ -537,19 +479,15 @@ TEST(EmployeeTest, EmployeeOperations) {
     EmployeeRole worker(EmployeeRole::Role::WAREHOUSE_WORKER);
     Employee employee("P001", "John", "Doe", "1990-05-15", address, contact,
                      "EMP001", worker, "2020-01-15", 30000.0, "Warehouse");
-    
     EXPECT_GE(employee.calculateYearsOfService(), 4);
     EXPECT_DOUBLE_EQ(employee.calculateSalary(), 30000.0);
-    
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     employee.promote(manager, 45000.0);
     EXPECT_EQ(employee.getRole().toString(), "Inventory Manager");
     EXPECT_DOUBLE_EQ(employee.getBaseSalary(), 45000.0);
     EXPECT_DOUBLE_EQ(employee.calculateSalary(), 67500.0);
-    
     employee.setDepartment("New Department");
     EXPECT_EQ(employee.getDepartment(), "New Department");
-    
     employee.setActive(false);
     EXPECT_FALSE(employee.isEmplActive());
 }
@@ -557,12 +495,10 @@ TEST(EmployeeTest, EmployeeOperations) {
 TEST(EmployeeTest, SalaryCalculations) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
-    
     EmployeeRole cashier(EmployeeRole::Role::CASHIER);
     Employee cashierEmp("P001", "Cash", "Ier", "1995-01-01", address, contact,
                        "EMP001", cashier, "2024-01-15", 25000.0, "Sales");
     EXPECT_DOUBLE_EQ(cashierEmp.calculateSalary(), 30000.0); // 25000 * 1.2
-    
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
     Employee adminEmp("P002", "Admin", "User", "1980-01-01", address, contact,
                      "EMP002", admin, "2024-01-15", 60000.0, "IT");
@@ -572,20 +508,17 @@ TEST(EmployeeTest, SalaryCalculations) {
 TEST(EmployeeTest, PermissionChecks) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
-    
     EmployeeRole cashier(EmployeeRole::Role::CASHIER);
     Employee cashierEmp("P001", "Cash", "Ier", "1995-01-01", address, contact,
                        "EMP001", cashier, "2024-01-15", 25000.0, "Sales");
     EXPECT_TRUE(cashierEmp.canProcessSales());
     EXPECT_FALSE(cashierEmp.canManageInventory());
     EXPECT_FALSE(cashierEmp.canManageUsers());
-    
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     Employee managerEmp("P002", "Manager", "User", "1985-01-01", address, contact,
                        "EMP002", manager, "2024-01-15", 50000.0, "Warehouse");
     EXPECT_TRUE(managerEmp.canManageInventory());
     EXPECT_FALSE(managerEmp.canManageUsers());
-    
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
     Employee adminEmp("P003", "Admin", "User", "1980-01-01", address, contact,
                      "EMP003", admin, "2024-01-15", 60000.0, "IT");
@@ -599,7 +532,6 @@ TEST(EmployeeTest, EmployeeInfo) {
     EmployeeRole role(EmployeeRole::Role::INVENTORY_MANAGER);
     Employee employee("P001", "John", "Doe", "1990-05-15", address, contact,
                      "EMP001", role, "2020-01-15", 50000.0, "Warehouse");
-    
     std::string info = employee.getInfo();
     EXPECT_FALSE(info.empty());
     EXPECT_NE(info.find("EMP001"), std::string::npos);
@@ -611,19 +543,16 @@ TEST(EmployeeTest, EmployeeEquality) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     EmployeeRole role(EmployeeRole::Role::WAREHOUSE_WORKER);
-    
     Employee emp1("P001", "John", "Doe", "1990-01-01", address, contact,
                  "EMP001", role, "2024-01-01", 30000.0, "Dept");
     Employee emp2("P002", "Jane", "Smith", "1985-01-01", address, contact,
                  "EMP001", role, "2024-01-01", 35000.0, "Dept");
     Employee emp3("P001", "John", "Doe", "1990-01-01", address, contact,
                  "EMP002", role, "2024-01-01", 30000.0, "Dept");
-    
     EXPECT_EQ(emp1, emp2);
     EXPECT_NE(emp1, emp3);
 }
 
-// ==================== UserAccount Tests (Extended) ====================
 TEST(UserAccountTest, ValidUserAccount) {
     auto address = std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA");
     auto contact = std::make_shared<ContactInfo>("user@test.com", "+1234567890");
@@ -640,41 +569,30 @@ TEST(UserAccountTest, InvalidUserAccount) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
     auto person = std::make_shared<Person>("P001", "John", "Doe", "1990-01-01", address, contact);
-    
     EXPECT_THROW(UserAccount account("", "Password123", person), DataValidationException);
     EXPECT_THROW(UserAccount account("user", "weak", person), DataValidationException);
     EXPECT_THROW(UserAccount account("user", "Password123", nullptr), DataValidationException);
 }
 
-// ==================== Integration Tests ====================
 TEST(PersonsIntegrationTest, CompletePersonSystem) {
-    // Create address and contact
     auto address = std::make_shared<Address>("789 Business Blvd", "Metropolis", "54321", "USA");
     auto contact = std::make_shared<ContactInfo>("biz@company.com", "+1987654321");
-    // Create person
     auto person = std::make_shared<Person>("P100", "Alice", "Wonderland", "1988-03-25", address, contact);
-    // Create customer from person
     CustomerCategory gold(CustomerCategory::Category::GOLD);
     Customer customer("P100", "Alice", "Wonderland", "1988-03-25", address, contact,
                      "CUST100", gold, "2024-01-01");
-    // Create employee from same person
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     Employee employee("P100", "Alice", "Wonderland", "1988-03-25", address, contact,
                      "EMP100", manager, "2023-06-15", 50000.0, "Operations");
-    // Create user account
     UserAccount account("alicew", "SecureAlice123", person);
-    // Test customer operations
     customer.addPurchase(2000.0);
     customer.addLoyaltyPoints(100);
     EXPECT_DOUBLE_EQ(customer.calculateDiscount(), 10.0);
     EXPECT_EQ(customer.getLoyaltyPoints(), 2100);
-    // Test employee operations
     EXPECT_TRUE(employee.canManageInventory());
     EXPECT_DOUBLE_EQ(employee.calculateSalary(), 75000.0); // 50000 * 1.5
-    // Test authentication
     EXPECT_TRUE(account.authenticate("SecureAlice123"));
     EXPECT_EQ(account.getPerson()->getFullName(), "Alice Wonderland");
-    // Verify all objects are properly linked
     EXPECT_EQ(customer.getFullName(), "Alice Wonderland");
     EXPECT_EQ(employee.getFullName(), "Alice Wonderland");
     EXPECT_EQ(account.getPerson()->getFullName(), "Alice Wonderland");
@@ -698,7 +616,6 @@ TEST(PersonsIntegrationTest, BusinessRules) {
     EXPECT_EQ(customer.getCategory().toString(), "Silver");
 }
 
-// ==================== Edge Case Tests ====================
 TEST(PersonsEdgeCasesTest, BoundaryConditions) {
     auto address = std::make_shared<Address>("A", "B", "1", "C");
     auto contact = std::make_shared<ContactInfo>("a@b.c", "+1234567");
@@ -737,7 +654,6 @@ TEST(PersonsEdgeCasesTest, ErrorConditions) {
     );
 }
 
-// ==================== Performance Tests ====================
 TEST(PersonsPerformanceTest, MultipleObjectCreation) {
     auto address = std::make_shared<Address>("123 St", "City", "12345", "Country");
     auto contact = std::make_shared<ContactInfo>("test@test.com", "+1234567890");
