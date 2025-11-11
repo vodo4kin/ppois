@@ -1,8 +1,8 @@
 #pragma once
 #include "User.hpp"
-#include "Booking.hpp"
 #include <vector>
 #include <memory>
+class Booking;
 
 class Customer : public User {
 private:

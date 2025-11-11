@@ -208,3 +208,9 @@ std::string Admin::getAdminCapabilities() const noexcept {
     }
     return capabilities;
 }
+
+void Admin::checkSystemLoad(int concurrentUsers) const {
+    if (concurrentUsers > PersonsConfig::Admin::MAX_ALLOWED_ADMIN_USERS) {
+        throw SystemOverloadException(concurrentUsers, "Admin");
+    }
+}

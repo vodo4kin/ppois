@@ -1,5 +1,6 @@
 #pragma once
 #include "Customer.hpp"
+#include "Booking.hpp"
 
 class VipCustomer : public Customer {
 private:

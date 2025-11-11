@@ -21,5 +21,6 @@ namespace PersonsConfig {
     namespace Admin {
         constexpr int MAX_DEPARTMENT_LENGTH = 50;
         constexpr int MAX_PERMISSIONS = 10;
+        constexpr int MAX_ALLOWED_ADMIN_USERS = 5;
     }
 }

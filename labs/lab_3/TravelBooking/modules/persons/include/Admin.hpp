@@ -19,15 +19,15 @@ public:
     };
 
 private:
-    AdminLevel adminLevel;
-    std::vector<Permission> permissions;
-    std::string department;
-    void initializePermissions();
+AdminLevel adminLevel;
+std::vector<Permission> permissions;
+std::string department;
+void initializePermissions();
 public:
-    Admin(const std::string& name, const std::string& email, 
-          const std::string& password, const std::string& birthDate,
-          AdminLevel level = AdminLevel::MODERATOR,
-          const std::string& department = "Administration");
+Admin(const std::string& name, const std::string& email, 
+    const std::string& password, const std::string& birthDate,
+    AdminLevel level = AdminLevel::MODERATOR,
+    const std::string& department = "Administration");
     std::string getUserRole() const override;
     AdminLevel getAdminLevel() const noexcept;
     std::string getAdminLevelStr() const noexcept;
@@ -53,4 +53,5 @@ public:
     int getActiveUsersCount(const std::vector<std::shared_ptr<User>>& users) const;
     bool canPerformAction(const std::string& action) const;
     std::string getAdminCapabilities() const noexcept;
+    void checkSystemLoad(int concurrentUsers) const;
 };

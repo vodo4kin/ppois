@@ -3,6 +3,7 @@
 #include <cctype>
 #include <chrono>
 #include <iomanip>
+#include <iostream>
 
 class StringValidation {
 public:
@@ -55,3 +56,19 @@ public:
         return age;
     }
 };
+
+class Logger {
+public:
+    static void logInfo(const std::string& message) {
+        std::cout << "[INFO] " << message << std::endl;
+    }
+
+    static void logWarning(const std::string& message) {
+        std::cout << "[WARNING] " << message << std::endl;
+    }
+
+    static void logError(const std::string& message) {
+        std::cerr << "[ERROR] " << message << std::endl;
+    }
+};
+
