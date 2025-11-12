@@ -123,20 +123,3 @@ bool Meal::isSuitableForDiet(const std::string& diet) const {
 bool Meal::isWithinCalorieRange(int minCalories, int maxCalories) const {
     return calories >= minCalories && calories <= maxCalories;
 }
-
-void Meal::validateMeal() const {
-    bool hasVegan = false;
-    bool hasMeat = false;
-    for (const auto& tag : dietaryTags) {
-        if (tag == "vegan" || tag == "vegetarian") hasVegan = true;
-        if (tag == "meat" || tag == "poultry" || tag == "seafood") hasMeat = true;
-    }
-    if (hasVegan && hasMeat) {
-        throw MealCompatibilityException(name, "Cannot be both vegan and contain meat products");
-    }
-    double pricePerCalorie = price / calories;
-    if (pricePerCalorie > MealConfig::Meal::MAX_PRICE_PER_CALORIE) {
-        throw MealPricingException(name, price, calories, 
-            MealConfig::Meal::MAX_PRICE_PER_CALORIE);
-    }
-}

@@ -27,5 +27,4 @@ public:
     void setCalories(int newCalories);
     bool isSuitableForDiet(const std::string& diet) const;
     bool isWithinCalorieRange(int minCalories, int maxCalories) const;
-    void validateMeal() const;
 };

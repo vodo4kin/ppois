@@ -12,7 +12,6 @@ public:
         CONFIRMED,
         CANCELLED
     };
-
 private:
     std::shared_ptr<Customer> customer;
     std::shared_ptr<Tour> tour;
@@ -20,20 +19,19 @@ private:
     std::string bookingDate;
     Status status;
     double totalPrice;
+    void updateTotalPrice();
 public:
     Booking(std::shared_ptr<Customer> customer,
-            std::shared_ptr<Tour> tour,
-            std::shared_ptr<Transport> transport,
-            const std::string& bookingDate,
-            double price);
+                 std::shared_ptr<Tour> tour,
+                 std::shared_ptr<Transport> transport);
     int getBookingId() const;
     std::string getBookingDate() const;
     Status getStatus() const;
     std::string getStatusStr() const;
-    double getTotalPrice() const;
+    double getTotalPrice();
     bool isActive() const;
     void confirm();
     void cancel();
     void setStatus(Status newStatus);
-    std::string getBookingInfo() const;
+    std::string getBookingInfo();
 };

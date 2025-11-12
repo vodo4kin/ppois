@@ -58,7 +58,7 @@ std::string Tour::getEndDate() const {
     return endDate;
 }
 
-double Tour::getPrice() const {
+double Tour::getStartPrice() const {
     return price;
 }
 

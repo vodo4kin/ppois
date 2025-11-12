@@ -6,21 +6,19 @@
 
 static std::atomic<int> nextBookingId{1};
 
+void Booking::updateTotalPrice() {
+    totalPrice = tour->calculateTotalTourCost() + transport->getPrice();
+}
+
 Booking::Booking(std::shared_ptr<Customer> customer,
                  std::shared_ptr<Tour> tour,
-                 std::shared_ptr<Transport> transport,
-                 const std::string& bookingDate,
-                 double price)
-    : customer(customer), tour(tour), transport(transport),
-      bookingDate(bookingDate), status(Status::PENDING), totalPrice(price) {
+                 std::shared_ptr<Transport> transport)
+    : customer(customer), tour(tour), transport(transport), status(Status::PENDING) {
     if (!customer || !tour || !transport) {
         throw InvalidBookingException("Booking must have valid customer, tour, and transport");
     }
-    if (!StringValidation::isValidDate(bookingDate)) {
-        throw InvalidDateException("Invalid booking date format");
-    }
-    if (price < BookingConfig::Booking::MIN_PRICE || price > BookingConfig::Booking::MAX_PRICE) throw InvalidDataException("price", "must be in range \"" + std::to_string(BookingConfig::Booking::MIN_PRICE) 
-    + " - " + std::to_string(BookingConfig::Booking::MAX_PRICE) + "\".");
+    updateTotalPrice();
+    bookingDate = DateUtils::getCurrentDate();
     nextBookingId++;
 }
 
@@ -43,7 +41,8 @@ std::string Booking::getStatusStr() const {
     return "Unknown";
 }
 
-double Booking::getTotalPrice() const {
+double Booking::getTotalPrice() {
+    updateTotalPrice();
     return totalPrice;
 }
 
@@ -52,18 +51,22 @@ bool Booking::isActive() const {
 }
 
 void Booking::confirm() {
+    updateTotalPrice();
     status = Status::CONFIRMED;
 }
 
 void Booking::cancel() {
+    updateTotalPrice();
     status = Status::CANCELLED;
 }
 
 void Booking::setStatus(Status newStatus) {
+    updateTotalPrice();
     status = newStatus;
 }
 
-std::string Booking::getBookingInfo() const {
+std::string Booking::getBookingInfo() {
+    updateTotalPrice();
     return "Booking ID: " + std::to_string(nextBookingId - 1) + "\n"
          + "Customer: " + (customer ? customer->getName() : "Unknown") + "\n"
          + "Tour: " + (tour ? tour->getTitle() : "Unknown") + "\n"

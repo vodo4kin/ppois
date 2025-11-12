@@ -35,7 +35,7 @@ public:
     std::string getDescription() const;
     std::string getStartDate() const;
     std::string getEndDate() const;
-    double getPrice() const;
+    double getStartPrice() const;
     Type getTourType() const;
     std::string getTourTypeStr() const;
     std::string getTourInfo() const;

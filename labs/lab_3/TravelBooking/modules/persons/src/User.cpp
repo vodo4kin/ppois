@@ -31,14 +31,12 @@ bool User::isValidPassword(const std::string& password, size_t minLength) const 
 	bool hasUpper = false;
 	bool hasLower = false;
 	bool hasDigit = false;
-	bool hasSpecial = false;
 	for (char c : password) {
 		if (std::isupper(c)) hasUpper = true;
 		else if (std::islower(c)) hasLower = true;
 		else if (std::isdigit(c)) hasDigit = true;
-		else if (!std::isspace(c)) hasSpecial = true;
 	}
-	return hasUpper && hasLower && hasDigit && hasSpecial;
+	return hasUpper && hasLower && hasDigit;
 }
 
 bool User::isValidPhoneNumber(const std::string& phoneNumber) const {
@@ -74,7 +72,8 @@ User::User(const std::string& name, const std::string& email,
         throw InvalidDataException("email", "must be valid (example@i.o)");
     }
     if (!isValidPassword(password, PersonsConfig::User::MIN_PASSWORD_LENGTH)) {
-        throw InvalidDataException("password", "must be at least " + std::to_string(PersonsConfig::User::MIN_PASSWORD_LENGTH) + " characters long");
+        throw InvalidDataException("password", "must be at least " + std::to_string(PersonsConfig::User::MIN_PASSWORD_LENGTH) 
+		+ " characters long and and must have uppercase, lowercase letters and numbers");
     }
 	if(!StringValidation::isValidDate(birthDate)) {
 		throw InvalidDataException("birthDate", "must be valid (Example: 2024-01-01)");
