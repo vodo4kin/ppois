@@ -244,9 +244,17 @@ TEST(EmployeeRoleTest, SalaryMultipliers) {
     EmployeeRole cashier(EmployeeRole::Role::CASHIER);
     EmployeeRole manager(EmployeeRole::Role::INVENTORY_MANAGER);
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
+    EmployeeRole itSupport(EmployeeRole::Role::IT_SUPPORT);
+    EmployeeRole financeOfficer(EmployeeRole::Role::FINANCE_OFFICER);
+    EmployeeRole supervisor(EmployeeRole::Role::SUPERVISOR);
+    EmployeeRole hrManager(EmployeeRole::Role::HR_MANAGER);
     EXPECT_DOUBLE_EQ(worker.getSalaryMultiplier(), 1.0);
     EXPECT_DOUBLE_EQ(cashier.getSalaryMultiplier(), 1.2);
     EXPECT_DOUBLE_EQ(manager.getSalaryMultiplier(), 1.5);
+    EXPECT_DOUBLE_EQ(itSupport.getSalaryMultiplier(), 1.4);
+    EXPECT_DOUBLE_EQ(financeOfficer.getSalaryMultiplier(), 1.6);
+    EXPECT_DOUBLE_EQ(supervisor.getSalaryMultiplier(), 1.8);
+    EXPECT_DOUBLE_EQ(hrManager.getSalaryMultiplier(), 1.7);
     EXPECT_DOUBLE_EQ(admin.getSalaryMultiplier(), 2.0);
 }
 
