@@ -11,12 +11,12 @@ public:
     Camping(const std::string& name, const std::string& location,
             double price, int capacity, double rating,
             const std::string& accType, bool sharedBath, bool electricity, bool campfire);
-    std::string getType() const override { return "Camping"; }
+    std::string getType() const override;
     std::string getAccommodationInfo() const override;
-    std::string getAccommodationType() const { return accommodationType; }
-    bool hasSharedBathrooms() const { return hasSharedBathroom; }
-    bool hasElectricalAccess() const { return hasElectricity; }
-    bool isCampfireAllowed() const { return campfireAllowed; }
+    std::string getAccommodationType() const;
+    bool hasSharedBathrooms() const;
+    bool hasElectricalAccess() const;
+    bool isCampfireAllowed() const;
     bool isGlamping() const;
     bool isBasicCamping() const;
     bool hasEssentialAmenities() const;

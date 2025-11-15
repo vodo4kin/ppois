@@ -75,3 +75,9 @@ bool GuestHouse::isSuitableForLongStay() const {
 bool GuestHouse::hasCommunityAtmosphere() const {
     return hasCommonArea && totalRooms >= AccommodationConfig::GuestHouse::COMMUNITY_MIN_ROOMS;
 }
+
+std::string GuestHouse::getType() const { return "Guest House"; }
+bool GuestHouse::isFamilyBusiness() const { return isFamilyOwned; }
+int GuestHouse::getTotalRooms() const { return totalRooms; }
+std::string GuestHouse::getHostLanguage() const { return hostLanguage; }
+bool GuestHouse::hasCommonSpace() const { return hasCommonArea; }

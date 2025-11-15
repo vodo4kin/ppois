@@ -85,3 +85,9 @@ int BoutiqueHotel::calculateHotelAge() const {
     int currentYear = std::stoi(currentYearStr);
     return currentYear - yearBuilt;
 }
+
+std::string BoutiqueHotel::getType() const { return "Boutique Hotel"; }
+std::string BoutiqueHotel::getTheme() const { return theme; }
+int BoutiqueHotel::getYearBuilt() const { return yearBuilt; }
+bool BoutiqueHotel::hasConciergeService() const { return hasConcierge; }
+std::string BoutiqueHotel::getArchitecturalStyle() const { return architecturalStyle; }

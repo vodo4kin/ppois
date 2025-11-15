@@ -116,3 +116,10 @@ void Accommodation::validateBooking(int guests, const std::string& startDate, co
         throw InvalidDataException("guests", "must be positive number");
     }
 }
+
+std::string Accommodation::getName() const { return name; }
+std::string Accommodation::getLocation() const { return location; }
+double Accommodation::getPricePerNight() const { return pricePerNight; }
+int Accommodation::getCapacity() const { return capacity; }
+double Accommodation::getRating() const { return rating; }
+std::vector<std::string> Accommodation::getAmenities() const { return amenities; }

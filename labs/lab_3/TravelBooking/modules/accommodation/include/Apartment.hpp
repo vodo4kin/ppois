@@ -13,12 +13,12 @@ public:
               double price, int capacity, double rating,
               int rooms, bool kitchen, bool washingMachine, double area);
     
-    std::string getType() const override { return "Apartment"; }
+    std::string getType() const override;
     std::string getAccommodationInfo() const override;
-    int getNumberOfRooms() const { return numberOfRooms; }
-    bool hasFullKitchen() const { return hasKitchen; }
-    bool hasLaundry() const { return hasWashingMachine; }
-    double getArea() const { return area; }
+    int getNumberOfRooms() const;
+    bool hasFullKitchen() const;
+    bool hasLaundry() const;
+    double getArea() const;
     bool isSuitableForFamily() const;
     bool isStudio() const;
     double calculatePricePerPerson() const;

@@ -78,3 +78,9 @@ bool MountainLodge::isRemoteLocation() const {
 bool MountainLodge::requiresExperience() const {
     return accessibility == "expert";
 }
+
+std::string MountainLodge::getType() const { return "Mountain Lodge"; }
+int MountainLodge::getAltitude() const { return altitude; }
+bool MountainLodge::hasHeatingSystem() const { return hasHeating; }
+bool MountainLodge::hasFireplaceFeature() const { return hasFireplace; }
+std::string MountainLodge::getAccessibilityLevel() const { return accessibility; }

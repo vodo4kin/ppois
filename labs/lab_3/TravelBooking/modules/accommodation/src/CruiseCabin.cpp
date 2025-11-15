@@ -85,3 +85,9 @@ std::string CruiseCabin::getCabinCategory() const {
 bool CruiseCabin::isOnUpperDeck() const {
     return deckNumber >= AccommodationConfig::CruiseCabin::UPPER_DECK_THRESHOLD;
 }
+
+std::string CruiseCabin::getType() const { return "Cruise Cabin"; }
+std::string CruiseCabin::getCabinType() const { return cabinType; }
+int CruiseCabin::getDeckNumber() const { return deckNumber; }
+bool CruiseCabin::hasOceanView() const { return hasWindow; }
+std::string CruiseCabin::getShipName() const { return shipName; }

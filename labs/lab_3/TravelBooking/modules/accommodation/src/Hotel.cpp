@@ -27,3 +27,9 @@ std::string Hotel::getAccommodationInfo() const {
            "Spa: " + std::string(hasSpa ? "Yes" : "No") + "\n";
     return info;
 }
+
+std::string Hotel::getType() const { return "Hotel"; }
+int Hotel::getStarRating() const { return starRating; }
+bool Hotel::hasSwimmingPool() const { return hasPool; }
+bool Hotel::hasSpaService() const { return hasSpa; }
+std::string Hotel::getRoomType() const { return roomType; }

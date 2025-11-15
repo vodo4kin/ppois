@@ -16,16 +16,15 @@ protected:
 public:
     Accommodation(const std::string& name, const std::string& location, 
                   double price, int capacity, double rating);
-    
     virtual std::string getType() const = 0;
     virtual std::string getAccommodationInfo() const;
     virtual ~Accommodation() = default;
-    std::string getName() const { return name; }
-    std::string getLocation() const { return location; }
-    double getPricePerNight() const { return pricePerNight; }
-    int getCapacity() const { return capacity; }
-    double getRating() const { return rating; }
-    std::vector<std::string> getAmenities() const { return amenities; }
+    std::string getName() const;
+    std::string getLocation() const;
+    double getPricePerNight() const;
+    int getCapacity() const;
+    double getRating() const;
+    std::vector<std::string> getAmenities() const;
     void addAmenity(const std::string& amenity);
     void setPricePerNight(double price);
     void setRating(double newRating);

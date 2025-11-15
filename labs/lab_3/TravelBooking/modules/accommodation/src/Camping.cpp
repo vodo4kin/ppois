@@ -73,3 +73,9 @@ std::string Camping::getCampingCategory() const {
 bool Camping::isFamilyFriendly() const {
     return hasEssentialAmenities() && campfireAllowed;
 }
+
+std::string Camping::getType() const { return "Camping"; }
+std::string Camping::getAccommodationType() const { return accommodationType; }
+bool Camping::hasSharedBathrooms() const { return hasSharedBathroom; }
+bool Camping::hasElectricalAccess() const { return hasElectricity; }
+bool Camping::isCampfireAllowed() const { return campfireAllowed; }

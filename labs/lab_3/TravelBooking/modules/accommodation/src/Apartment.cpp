@@ -85,3 +85,9 @@ std::string Apartment::getApartmentCategory() const {
 bool Apartment::hasFullAmenities() const {
     return hasKitchen && hasWashingMachine;
 }
+
+std::string Apartment::getType() const { return "Apartment"; }
+int Apartment::getNumberOfRooms() const { return numberOfRooms; }
+bool Apartment::hasFullKitchen() const { return hasKitchen; }
+bool Apartment::hasLaundry() const { return hasWashingMachine; }
+double Apartment::getArea() const { return area; }

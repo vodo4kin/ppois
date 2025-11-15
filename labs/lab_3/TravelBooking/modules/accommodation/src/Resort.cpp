@@ -97,3 +97,9 @@ std::string Resort::getResortCategory() const {
 bool Resort::isBeachResort() const {
     return hasPrivateBeach;
 }
+
+std::string Resort::getType() const{ return "Resort"; }
+bool Resort::hasBeachAccess() const { return hasPrivateBeach; }
+int Resort::getRestaurantCount() const { return numberOfRestaurants; }
+bool Resort::hasSpaServices() const { return hasSpa; }
+std::vector<std::string> Resort::getActivities() const { return activities; }

@@ -11,12 +11,12 @@ public:
     Resort(const std::string& name, const std::string& location,
            double price, int capacity, double rating,
            bool beach, int restaurants, bool spa, const std::vector<std::string>& activities);
-    std::string getType() const override { return "Resort"; }
+    std::string getType() const override;
     std::string getAccommodationInfo() const override;
-    bool hasBeachAccess() const { return hasPrivateBeach; }
-    int getRestaurantCount() const { return numberOfRestaurants; }
-    bool hasSpaServices() const { return hasSpa; }
-    std::vector<std::string> getActivities() const { return activities; }
+    bool hasBeachAccess() const;
+    int getRestaurantCount() const;
+    bool hasSpaServices() const;
+    std::vector<std::string> getActivities() const;
     bool isLuxuryResort() const;
     bool hasComprehensiveAmenities() const;
     int getActivityCount() const;

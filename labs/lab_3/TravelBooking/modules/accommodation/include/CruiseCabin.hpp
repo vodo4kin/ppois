@@ -11,12 +11,12 @@ public:
     CruiseCabin(const std::string& name, const std::string& location,
                 double price, int capacity, double rating,
                 const std::string& cabinType, int deck, bool window, const std::string& ship);
-    std::string getType() const override { return "Cruise Cabin"; }
+    std::string getType() const override;
     std::string getAccommodationInfo() const override;
-    std::string getCabinType() const { return cabinType; }
-    int getDeckNumber() const { return deckNumber; }
-    bool hasOceanView() const { return hasWindow; }
-    std::string getShipName() const { return shipName; }
+    std::string getCabinType() const;
+    int getDeckNumber() const;
+    bool hasOceanView() const;
+    std::string getShipName() const;
     bool isPremiumCabin() const;
     bool isInteriorCabin() const;
     bool hasView() const;

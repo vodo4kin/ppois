@@ -11,12 +11,12 @@ public:
     Hostel(const std::string& name, const std::string& location,
            double price, int capacity, double rating,
            bool privateRoom, int beds, bool sharedKitchen, const std::string& bathroom);
-    std::string getType() const override { return "Hostel"; }
+    std::string getType() const override;
     std::string getAccommodationInfo() const override;
-    bool isPrivate() const { return isPrivateRoom; }
-    int getBedsPerRoom() const { return bedsPerRoom; }
-    bool hasCommonKitchen() const { return hasSharedKitchen; }
-    std::string getBathroomType() const { return bathroomType; }
+    bool isPrivate() const;
+    int getBedsPerRoom() const;
+    bool hasCommonKitchen() const;
+    std::string getBathroomType() const;
     bool isDormitory() const;
     double calculatePricePerBed() const;
     bool hasPrivateBathroom() const;

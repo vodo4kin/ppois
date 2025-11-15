@@ -95,3 +95,9 @@ bool Hostel::isSuitableForGroup(int groupSize) const {
         return groupSize <= bedsPerRoom * AccommodationConfig::Hostel::MAX_GROUP_MULTIPLIER;
     }
 }
+
+std::string Hostel::getType() const { return "Hostel"; }
+bool Hostel::isPrivate() const { return isPrivateRoom; }
+int Hostel::getBedsPerRoom() const { return bedsPerRoom; }
+bool Hostel::hasCommonKitchen() const { return hasSharedKitchen; }
+std::string Hostel::getBathroomType() const { return bathroomType; }

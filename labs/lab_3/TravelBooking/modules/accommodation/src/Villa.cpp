@@ -79,3 +79,9 @@ std::string Villa::getVillaCategory() const {
 bool Villa::isSuitableForEvents() const {
     return hasGarden && capacity >= AccommodationConfig::Villa::MIN_EVENT_CAPACITY;
 }
+
+std::string Villa::getType() const { return "Villa"; }
+int Villa::getNumberOfFloors() const { return numberOfFloors; }
+bool Villa::hasPool() const { return hasPrivatePool; }
+bool Villa::hasGardenArea() const { return hasGarden; }
+bool Villa::hasParkingSpace() const { return hasParking; }

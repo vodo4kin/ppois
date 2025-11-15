@@ -12,12 +12,12 @@ public:
           double price, int capacity, double rating,
           int floors, bool pool, bool garden, bool parking);
     
-    std::string getType() const override { return "Villa"; }
+    std::string getType() const override;
     std::string getAccommodationInfo() const override;
-    int getNumberOfFloors() const { return numberOfFloors; }
-    bool hasPool() const { return hasPrivatePool; }
-    bool hasGardenArea() const { return hasGarden; }
-    bool hasParkingSpace() const { return hasParking; }
+    int getNumberOfFloors() const;
+    bool hasPool() const;
+    bool hasGardenArea() const;
+    bool hasParkingSpace() const;
     bool isLuxuryVilla() const;
     bool hasFullPrivacy() const;
     double calculateLuxurySurcharge() const;
