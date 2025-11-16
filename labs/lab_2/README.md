@@ -106,8 +106,6 @@ InvalidOrderStateException 0 0
 
 OrderProcessingException 0 0
 
-PaymentProcessingException 0 0
-
 ReportGenerationException 0 0
 
 ShippingException 0 0
@@ -120,6 +118,6 @@ ShippingException 0 0
 
 Ассоциации: 47
 
-Исключения: 13
+Исключения: 12
 
-Классы: 53
+Классы: 52
