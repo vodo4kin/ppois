@@ -2,7 +2,7 @@
 
 ### Документация к лабораторной работе располагается по следующей <a href="https://press-cs.ru/PPOIS/BookWarehouse">ссылке</a>.
 
-## Класс число_полей число_методов -> Ассоциации
+## Класс число_полей число_методов -> Ассоциации:
 
 Address 4 18
 
@@ -84,7 +84,7 @@ WarehouseManager 1 18 -> Warehouse, Book, StorageLocation, Delivery
 
 WarehouseSection 7 30 -> SHelf
 
-### Исключение количество_полей количество_методов
+### Исключение количество_полей количество_методов:
 
 WarehouseException 1 1
 
@@ -112,7 +112,7 @@ ReportGenerationException 0 0
 
 ShippingException 0 0
 
-## Итого
+## Итого:
 
 Поля: 171
 
