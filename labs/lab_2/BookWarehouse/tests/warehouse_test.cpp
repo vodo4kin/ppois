@@ -303,6 +303,11 @@ TEST(WarehouseTest, SectionManagement) {
     warehouse.removeSection("A");
     EXPECT_EQ(warehouse.getSectionsCount(), 1);
     EXPECT_FALSE(warehouse.containsSection("A"));
+    EXPECT_ANY_THROW(WarehouseManager manager(nullptr));
+    WarehouseManager manager(std::make_shared<Warehouse>(warehouse));
+    EXPECT_ANY_THROW(manager.setWarehouse(nullptr));
+    Warehouse warehouseTwo("Test", "Address");
+    EXPECT_NO_THROW(manager.setWarehouse(std::make_shared<Warehouse>(warehouseTwo)));
 }
 
 TEST(WarehouseTest, InventoryManagement) {
@@ -313,7 +318,6 @@ TEST(WarehouseTest, InventoryManagement) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse.addSection(section);
-    
     auto book = std::make_shared<Book>(
         ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
         PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
@@ -322,12 +326,10 @@ TEST(WarehouseTest, InventoryManagement) {
     );
     auto inventoryItem = std::make_shared<InventoryItem>(book, 10, location, "2024-01-15");
     warehouse.addInventoryItem(inventoryItem);
-    
     auto foundItems = warehouse.findInventoryByBook("9783161484100");
     EXPECT_EQ(foundItems.size(), 1);
     EXPECT_EQ(warehouse.getBookTotalQuantity("9783161484100"), 10);
     EXPECT_TRUE(warehouse.isBookInStock("9783161484100"));
-    
     warehouse.removeInventoryItem("9783161484100", "A-01-B-01");
     EXPECT_EQ(warehouse.getBookTotalQuantity("9783161484100"), 0);
 }
@@ -340,7 +342,6 @@ TEST(WarehouseTest, LocationSearch) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse.addSection(section);
-    
     auto available = warehouse.findAvailableLocations();
     EXPECT_EQ(available.size(), 1);
     auto optimal = warehouse.findOptimalLocation(50);
@@ -351,7 +352,6 @@ TEST(WarehouseTest, CapacityCalculations) {
     Warehouse warehouse("Test", "Address");
     auto section1 = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
     auto section2 = std::make_shared<WarehouseSection>("B", "General", "", WarehouseSection::SectionType::GENERAL);
-    
     auto shelf1 = std::make_shared<Shelf>("A-01", 1);
     auto shelf2 = std::make_shared<Shelf>("B-01", 1);
     auto loc1 = std::make_shared<StorageLocation>("A-01-B-01", 100); loc1->addBooks(50);
@@ -359,7 +359,6 @@ TEST(WarehouseTest, CapacityCalculations) {
     shelf1->addLocation(loc1); shelf2->addLocation(loc2);
     section1->addShelf(shelf1); section2->addShelf(shelf2);
     warehouse.addSection(section1); warehouse.addSection(section2);
-    
     EXPECT_EQ(warehouse.getTotalCapacity(), 300);
     EXPECT_EQ(warehouse.getCurrentLoad(), 150);
     EXPECT_EQ(warehouse.getAvailableSpace(), 150);
@@ -401,6 +400,9 @@ TEST(StockMovementTest, StatusOperations) {
     receipt.setStatus(StockMovement::MovementStatus::COMPLETED);
     EXPECT_TRUE(receipt.isCompleted());
     EXPECT_FALSE(receipt.isCancellable());
+    EXPECT_ANY_THROW(receipt.cancel());
+    receipt.setStatus(StockMovement::MovementStatus::PENDING);
+    EXPECT_NO_THROW(receipt.cancel());
 }
 
 TEST(StockMovementTest, ItemManagement) {
@@ -413,6 +415,8 @@ TEST(StockMovementTest, ItemManagement) {
         Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
         BookCondition(BookCondition::Condition::NEW), 19.99
     );
+    InventoryReport report(warehouse);
+    EXPECT_THROW(report.generateBookStockReport("123456"), ReportGenerationException);
     auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto item = std::make_shared<InventoryItem>(book, 10, location, "2024-01-15");
     receipt.addAffectedItem(item);
@@ -425,17 +429,49 @@ TEST(StockMovementTest, MovementTypeStrings) {
     auto warehouse = std::make_shared<Warehouse>("Test", "Address");
     StockReceipt receipt("REC-2024-001", "2024-01-15", "EMP-001", warehouse,
                         "Supplier", "PO-2024-001", "INV-2024-001", 1000.0);
+    StockReceipt receiptTwo("REC-2024-002", "2024-01-15", "EMP-001", warehouse,
+                        "Supplier", "PO-2024-001", "INV-2024-002", 1000.0);
+    StockReceipt receiptThree("REC-2024-002", "2024-01-15", "EMP-001", warehouse,
+                        "Supplier", "PO-2024-001", "INV-2024-002", 1000.0);
+    EXPECT_EQ(receipt.getInvoiceNumber(), "INV-2024-001");
     EXPECT_EQ(receipt.getMovementTypeString(), "Receipt");
-    
+    EXPECT_TRUE(receipt != receiptTwo);
+    EXPECT_FALSE(receipt == receiptTwo);
+    EXPECT_TRUE(receiptThree == receiptTwo);
+    EXPECT_FALSE(receiptThree != receiptTwo);
+    EXPECT_NO_THROW(receipt.getInfo());
     auto source = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest = std::make_shared<StorageLocation>("A-01-B-02", 100);
     StockTransfer transfer("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                           source, dest, "Test");
     EXPECT_EQ(transfer.getMovementTypeString(), "Transfer");
-    
+    EXPECT_NO_THROW(transfer.execute());
+    EXPECT_ANY_THROW(transfer.execute());
     StockWriteOff writeOff("WO-2024-001", "2024-01-15", "EMP-001", warehouse,
                           StockWriteOff::WriteOffReason::DAMAGED, "Damage");
+    StockWriteOff writeOffTwo("WO-2024-001", "2024-01-15", "EMP-001", warehouse,
+                          StockWriteOff::WriteOffReason::EXPIRED, "EXPIRED");
+    StockWriteOff writeOffThree("WO-2024-001", "2024-01-15", "EMP-001", warehouse,
+                          StockWriteOff::WriteOffReason::OBSOLETE, "OBSOLETE");
+    StockWriteOff writeOffFour("WO-2024-001", "2024-01-15", "EMP-001", warehouse,
+                          StockWriteOff::WriteOffReason::LOST, "Lost");
+    StockWriteOff writeOffFive("WO-2024-001", "2024-01-15", "EMP-001", warehouse,
+                          StockWriteOff::WriteOffReason::QUALITY_ISSUE, "QUALITY_ISSUE");
+    StockWriteOff writeOffSix("WO-2024-001", "2024-01-15", "EMP-001", warehouse,
+                          StockWriteOff::WriteOffReason::OTHER, "OTHER");
+    EXPECT_NO_THROW(writeOff.getInfo());
+    EXPECT_NO_THROW(writeOff.execute());
+    EXPECT_THROW(writeOff.execute(), WarehouseException);
+    EXPECT_THROW(writeOff.cancel(), WarehouseException);
+    EXPECT_NO_THROW(writeOffTwo.cancel());
     EXPECT_EQ(writeOff.getMovementTypeString(), "Write-Off");
+    EXPECT_EQ(writeOff.getReasonString(), "Damaged");
+    EXPECT_EQ(writeOffTwo.getReasonString(), "Expired");
+    EXPECT_EQ(writeOffThree.getReasonString(), "Obsolete");
+    EXPECT_EQ(writeOffFour.getReasonString(), "Lost");
+    EXPECT_EQ(writeOffFive.getReasonString(), "Quality Issue");
+    EXPECT_EQ(writeOffSix.getReasonString(), "Other");
+
 }
 
 TEST(StockMovementTest, StatusStrings) {
@@ -611,7 +647,6 @@ TEST(InventoryReportTest, ReportGeneration) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse->addSection(section);
-    
     InventoryReport report(warehouse);
     EXPECT_FALSE(report.generateFullReport().empty());
     EXPECT_FALSE(report.generateStockLevelReport().empty());
@@ -629,7 +664,6 @@ TEST(InventoryReportTest, BookSpecificReports) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse->addSection(section);
-    
     auto book = std::make_shared<Book>(
         ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
         PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
@@ -638,7 +672,6 @@ TEST(InventoryReportTest, BookSpecificReports) {
     );
     auto inventoryItem = std::make_shared<InventoryItem>(book, 10, location, "2024-01-15");
     warehouse->addInventoryItem(inventoryItem);
-    
     InventoryReport report(warehouse);
     EXPECT_FALSE(report.generateBookStockReport("9783161484100").empty());
     EXPECT_FALSE(report.generateLowStockReport().empty());
@@ -684,7 +717,6 @@ TEST(WarehouseManagerTest, LocationFinding) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse->addSection(section);
-    
     WarehouseManager manager(warehouse);
     auto book = std::make_shared<Book>(
         ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
@@ -704,7 +736,6 @@ TEST(WarehouseManagerTest, StockChecks) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse->addSection(section);
-    
     auto book = std::make_shared<Book>(
         ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
         PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
@@ -713,7 +744,6 @@ TEST(WarehouseManagerTest, StockChecks) {
     );
     auto inventoryItem = std::make_shared<InventoryItem>(book, 10, location, "2024-01-15");
     warehouse->addInventoryItem(inventoryItem);
-    
     WarehouseManager manager(warehouse);
     EXPECT_FALSE(manager.getBookStockInfo("9783161484100").empty());
     EXPECT_TRUE(manager.isBookAvailable("9783161484100", 5));
@@ -802,16 +832,13 @@ TEST(EdgeCasesTest, BoundaryConditions) {
         Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
         BookCondition(BookCondition::Condition::NEW), 19.99
     );
-    
     InventoryItem item(book, 1, location, "2024-01-15");
     EXPECT_TRUE(item.isInStock());
     item.decreaseQuantity(1);
     EXPECT_FALSE(item.isInStock());
-    
     location->addBooks(1);
     EXPECT_TRUE(location->isFull());
     EXPECT_FALSE(location->canAccommodate(1));
-    
     EXPECT_TRUE(shelf->isFull());
     EXPECT_FALSE(shelf->hasAvailableSpace());
 }
@@ -834,7 +861,6 @@ TEST(DeliveryTest, AddDuplicateBookThrows) {
         Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
         BookCondition(BookCondition::Condition::NEW), 19.99
     );
-    
     delivery.addBook(book);
     EXPECT_THROW(delivery.addBook(book), DataValidationException);
 }
@@ -847,7 +873,6 @@ TEST(DeliveryTest, AddBookToNonScheduledDeliveryThrows) {
         Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
         BookCondition(BookCondition::Condition::NEW), 19.99
     );
-    
     delivery.setStatus(Delivery::DeliveryStatus::IN_TRANSIT);
     EXPECT_THROW(delivery.addBook(book), WarehouseException);
 }
@@ -860,7 +885,6 @@ TEST(DeliveryTest, RemoveBookFromNonScheduledDeliveryThrows) {
         Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
         BookCondition(BookCondition::Condition::NEW), 19.99
     );
-    
     delivery.addBook(book);
     delivery.setStatus(Delivery::DeliveryStatus::IN_TRANSIT);
     EXPECT_THROW(delivery.removeBook(book), WarehouseException);
@@ -1056,29 +1080,22 @@ TEST(StockTransferTest, GetInfo) {
     auto warehouse = std::make_shared<Warehouse>("Test", "Address");
     auto source = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest = std::make_shared<StorageLocation>("B-02-C-03", 100);
-    
     StockTransfer transfer("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                           source, dest, "Reorganization", "Test notes");
-    
     std::string info = transfer.getInfo();
     EXPECT_NE(info.find("TRF-2024-001"), std::string::npos);
     EXPECT_NE(info.find("A-01-B-01"), std::string::npos);
     EXPECT_NE(info.find("B-02-C-03"), std::string::npos);
     EXPECT_NE(info.find("Reorganization"), std::string::npos);
-    EXPECT_NE(info.find("Yes"), std::string::npos); // Cross-Section: Yes
+    EXPECT_NE(info.find("Yes"), std::string::npos);
 }
 
 TEST(StockTransferTest, GetInfoWithNullLocations) {
     auto warehouse = std::make_shared<Warehouse>("Test", "Address");
-    
-    // Создаем transfer с nullptr locations (хотя конструктор этого не позволяет)
-    // Этот тест в основном для покрытия ветки "N/A" в getInfo()
     auto source = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest = std::make_shared<StorageLocation>("A-01-B-02", 100);
-    
     StockTransfer transfer("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                           source, dest, "Reorganization");
-    
     std::string info = transfer.getInfo();
     EXPECT_NE(info.find("A-01-B-01"), std::string::npos);
     EXPECT_NE(info.find("A-01-B-02"), std::string::npos);
@@ -1090,12 +1107,10 @@ TEST(StockTransferTest, EqualityOperatorsSameLocations) {
     auto dest1 = std::make_shared<StorageLocation>("B-02-C-03", 100);
     auto source2 = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest2 = std::make_shared<StorageLocation>("B-02-C-03", 100);
-    
     StockTransfer transfer1("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source1, dest1, "Reorganization", "Notes");
     StockTransfer transfer2("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source2, dest2, "Reorganization", "Notes");
-    
     EXPECT_TRUE(transfer1 == transfer2);
     EXPECT_FALSE(transfer1 != transfer2);
 }
@@ -1105,12 +1120,10 @@ TEST(StockTransferTest, EqualityOperatorsDifferentSourceLocation) {
     auto source1 = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto source2 = std::make_shared<StorageLocation>("A-01-B-02", 100);
     auto dest = std::make_shared<StorageLocation>("B-02-C-03", 100);
-    
     StockTransfer transfer1("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source1, dest, "Reorganization");
     StockTransfer transfer2("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source2, dest, "Reorganization");
-    
     EXPECT_FALSE(transfer1 == transfer2);
     EXPECT_TRUE(transfer1 != transfer2);
 }
@@ -1120,12 +1133,10 @@ TEST(StockTransferTest, EqualityOperatorsDifferentDestinationLocation) {
     auto source = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest1 = std::make_shared<StorageLocation>("B-02-C-03", 100);
     auto dest2 = std::make_shared<StorageLocation>("B-02-C-04", 100);
-    
     StockTransfer transfer1("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source, dest1, "Reorganization");
     StockTransfer transfer2("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source, dest2, "Reorganization");
-    
     EXPECT_FALSE(transfer1 == transfer2);
     EXPECT_TRUE(transfer1 != transfer2);
 }
@@ -1134,12 +1145,10 @@ TEST(StockTransferTest, EqualityOperatorsDifferentTransferReason) {
     auto warehouse = std::make_shared<Warehouse>("Test", "Address");
     auto source = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest = std::make_shared<StorageLocation>("B-02-C-03", 100);
-    
     StockTransfer transfer1("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source, dest, "Reorganization");
     StockTransfer transfer2("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source, dest, "Restocking");
-    
     EXPECT_FALSE(transfer1 == transfer2);
     EXPECT_TRUE(transfer1 != transfer2);
 }
@@ -1148,12 +1157,10 @@ TEST(StockTransferTest, EqualityOperatorsDifferentMovementId) {
     auto warehouse = std::make_shared<Warehouse>("Test", "Address");
     auto source = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest = std::make_shared<StorageLocation>("B-02-C-03", 100);
-    
     StockTransfer transfer1("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source, dest, "Reorganization");
     StockTransfer transfer2("TRF-2024-002", "2024-01-15", "EMP-001", warehouse,
                            source, dest, "Reorganization");
-    
     EXPECT_FALSE(transfer1 == transfer2);
     EXPECT_TRUE(transfer1 != transfer2);
 }
@@ -1165,7 +1172,6 @@ TEST(StockTransferTest, EqualityOperatorsReflexivity) {
     
     StockTransfer transfer("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                           source, dest, "Reorganization");
-    
     EXPECT_TRUE(transfer == transfer);
     EXPECT_FALSE(transfer != transfer);
 }
@@ -1176,14 +1182,498 @@ TEST(StockTransferTest, EqualityOperatorsSymmetry) {
     auto source2 = std::make_shared<StorageLocation>("A-01-B-01", 100);
     auto dest1 = std::make_shared<StorageLocation>("B-02-C-03", 100);
     auto dest2 = std::make_shared<StorageLocation>("B-02-C-03", 100);
-    
     StockTransfer transfer1("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source1, dest1, "Reorganization");
     StockTransfer transfer2("TRF-2024-001", "2024-01-15", "EMP-001", warehouse,
                            source2, dest2, "Reorganization");
-    
     EXPECT_TRUE(transfer1 == transfer2);
     EXPECT_TRUE(transfer2 == transfer1);
     EXPECT_FALSE(transfer1 != transfer2);
     EXPECT_FALSE(transfer2 != transfer1);
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffValid) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 1);
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    shelf->addLocation(location);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    WarehouseManager manager(warehouse);
+    std::vector<std::pair<std::shared_ptr<Book>, int>> receiptItems = {{book, 20}};
+    auto receipt = manager.processStockReceipt(
+        "Test Supplier", 
+        "PO-2024-001", 
+        "INV-2024-001", 
+        400.0, 
+        receiptItems, 
+        "EMP-001",
+        "Initial stock"
+    );
+    EXPECT_EQ(warehouse->getBookTotalQuantity("9783161484100"), 40);
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffEmptyItemsThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    std::vector<std::tuple<std::shared_ptr<Book>, std::shared_ptr<StorageLocation>, int>> items;
+    EXPECT_THROW(
+        manager.processStockWriteOff(
+            StockWriteOff::WriteOffReason::DAMAGED,
+            "Damage",
+            items,
+            "EMP-001"
+        ),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffNullBookThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    WarehouseManager manager(warehouse);
+    std::vector<std::tuple<std::shared_ptr<Book>, std::shared_ptr<StorageLocation>, int>> items = {
+        {nullptr, location, 5}
+    };
+    EXPECT_THROW(
+        manager.processStockWriteOff(
+            StockWriteOff::WriteOffReason::DAMAGED,
+            "Damage",
+            items,
+            "EMP-001"
+        ),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffNullLocationThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    WarehouseManager manager(warehouse);
+    std::vector<std::tuple<std::shared_ptr<Book>, std::shared_ptr<StorageLocation>, int>> items = {
+        {book, nullptr, 5}
+    };
+    EXPECT_THROW(
+        manager.processStockWriteOff(
+            StockWriteOff::WriteOffReason::DAMAGED,
+            "Damage",
+            items,
+            "EMP-001"
+        ),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffInvalidQuantityThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    WarehouseManager manager(warehouse);
+    std::vector<std::tuple<std::shared_ptr<Book>, std::shared_ptr<StorageLocation>, int>> items = {
+        {book, location, 0}
+    };
+    EXPECT_THROW(
+        manager.processStockWriteOff(
+            StockWriteOff::WriteOffReason::DAMAGED,
+            "Damage",
+            items,
+            "EMP-001"
+        ),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffBookNotFoundThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    WarehouseManager manager(warehouse);
+    std::vector<std::tuple<std::shared_ptr<Book>, std::shared_ptr<StorageLocation>, int>> items = {
+        {book, location, 5}
+    };
+    EXPECT_THROW(
+        manager.processStockWriteOff(
+            StockWriteOff::WriteOffReason::DAMAGED,
+            "Damage",
+            items,
+            "EMP-001"
+        ),
+        BookNotFoundException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockWriteOffInsufficientStockThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 1);
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    shelf->addLocation(location);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto bookTwo = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test Book", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub", "test@pub.com", 2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto inventoryItem = std::make_shared<InventoryItem>(book, 5, location, "2024-01-15");
+    auto inventoryTwo = std::make_shared<InventoryItem>(book, 5, location, "2024-01-15");
+    EXPECT_TRUE(*inventoryItem == *inventoryTwo);
+    EXPECT_FALSE(*inventoryItem != *inventoryTwo);
+    warehouse->addInventoryItem(inventoryItem);
+    WarehouseManager manager(warehouse);
+    std::vector<std::tuple<std::shared_ptr<Book>, std::shared_ptr<StorageLocation>, int>> items = {
+        {book, location, 10}
+    };
+    EXPECT_THROW(
+        manager.processStockWriteOff(
+            StockWriteOff::WriteOffReason::DAMAGED,
+            "Damage",
+            items,
+            "EMP-001"
+        ),
+        InsufficientStockException
+    );
+    EXPECT_NO_THROW(inventoryItem->getInfo());
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferNullLocationsThrow) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    std::vector<std::pair<std::shared_ptr<Book>, int>> items = {{book, 5}};
+    EXPECT_THROW(
+        manager.processStockTransfer(nullptr, std::make_shared<StorageLocation>("A-01-B-01", 100),
+                                     "Reason", items, "EMP-001", "Notes"),
+        DataValidationException
+    );
+    EXPECT_THROW(
+        manager.processStockTransfer(std::make_shared<StorageLocation>("A-01-B-01", 100), nullptr,
+                                     "Reason", items, "EMP-001", "Notes"),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferEmptyItemsThrow) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto src = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    auto dst = std::make_shared<StorageLocation>("A-01-B-02", 100);
+    std::vector<std::pair<std::shared_ptr<Book>, int>> items;
+    EXPECT_THROW(
+        manager.processStockTransfer(src, dst, "Reason", items, "EMP-001", "Notes"),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferNullBookThrow) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto src = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    auto dst = std::make_shared<StorageLocation>("A-01-B-02", 100);
+    std::vector<std::pair<std::shared_ptr<Book>, int>> items = {{nullptr, 5}};
+    EXPECT_THROW(
+        manager.processStockTransfer(src, dst, "Reason", items, "EMP-001", "Notes"),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferNonPositiveQuantityThrow) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto src = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    auto dst = std::make_shared<StorageLocation>("A-01-B-02", 100);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    EXPECT_THROW(
+        manager.processStockTransfer(src, dst, "Reason", {{book, 0}}, "EMP-001", "Notes"),
+        DataValidationException
+    );
+    EXPECT_THROW(
+        manager.processStockTransfer(src, dst, "Reason", {{book, -5}}, "EMP-001", "Notes"),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferBookNotFoundThrow) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 2);
+    auto src = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    auto dst = std::make_shared<StorageLocation>("A-01-B-02", 100);
+    shelf->addLocation(src); shelf->addLocation(dst);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    EXPECT_THROW(
+        manager.processStockTransfer(src, dst, "Reason", {{book, 5}}, "EMP-001", "Notes"),
+        BookNotFoundException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferInsufficientStockThrow) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 2);
+    auto src = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    auto dst = std::make_shared<StorageLocation>("A-01-B-02", 100);
+    shelf->addLocation(src); shelf->addLocation(dst);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto item = std::make_shared<InventoryItem>(book, 3, src, "2024-01-15");
+    warehouse->addInventoryItem(item);
+    EXPECT_THROW(
+        manager.processStockTransfer(src, dst, "Reason", {{book, 5}}, "EMP-001", "Notes"),
+        InsufficientStockException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessStockTransferSuccessReturnsTransfer) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 2);
+    auto src = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    auto dst = std::make_shared<StorageLocation>("A-01-B-02", 100);
+    shelf->addLocation(src); shelf->addLocation(dst);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto item = std::make_shared<InventoryItem>(book, 10, src, "2024-01-15");
+    warehouse->addInventoryItem(item);
+    auto transfer = manager.processStockTransfer(
+        src, dst, "Reorganization", {{book, 5}}, "EMP-001", "Notes"
+    );
+    EXPECT_NE(transfer, nullptr);
+    EXPECT_EQ(transfer->getAffectedItems().size(), 1);
+    EXPECT_EQ(transfer->getMovementType(), StockMovement::MovementType::TRANSFER);
+}
+
+TEST(WarehouseManagerTest, CreateDeliveryValid) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Test", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto delivery = manager.createDelivery("Supplier", "2024-12-31", "TRK123", "Carrier", 100.0, {book});
+    EXPECT_NE(delivery, nullptr);
+    EXPECT_EQ(delivery->getSupplierName(), "Supplier");
+    EXPECT_EQ(delivery->getBookCount(), 1);
+    EXPECT_EQ(delivery->getStatus(), Delivery::DeliveryStatus::SCHEDULED);
+}
+
+TEST(WarehouseManagerTest, CreateDeliveryNullBookThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    EXPECT_THROW(
+        manager.createDelivery("Supplier", "2024-12-31", "TRK123", "Carrier", 100.0, {nullptr}),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, CreateDeliveryDuplicateBookThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Dup", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    EXPECT_THROW(
+        manager.createDelivery("Supplier", "2024-12-31", "TRK123", "Carrier", 100.0, {book, book}),
+        DataValidationException
+    );
+}
+
+TEST(WarehouseManagerTest, ProcessDeliveryArrivalNullDeliveryThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    EXPECT_THROW(manager.processDeliveryArrival(nullptr, "EMP-001"), DataValidationException);
+}
+
+TEST(WarehouseManagerTest, ProcessDeliveryArrivalWrongStatusThrows) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    WarehouseManager manager(warehouse);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Status", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto delivery = manager.createDelivery("Supplier", "2024-12-31", "TRK123", "Carrier", 100.0, {book});
+    EXPECT_THROW(manager.processDeliveryArrival(delivery, "EMP-001"), WarehouseException);
+}
+
+TEST(WarehouseManagerTest, ProcessDeliveryArrivalFromInTransitThrowsOnInvalidPOFormat) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 2);
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    shelf->addLocation(location);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    WarehouseManager manager(warehouse);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Arrive", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto delivery = manager.createDelivery("Supplier", "2024-12-31", "TRK123", "Carrier", 100.0, {book});
+    delivery->setStatus(Delivery::DeliveryStatus::IN_TRANSIT);
+    EXPECT_THROW(manager.processDeliveryArrival(delivery, "EMP-001"), DataValidationException);
+}
+
+TEST(WarehouseManagerTest, ProcessDeliveryArrivalFromDelayedThrowsOnInvalidPOFormat) {
+    auto warehouse = std::make_shared<Warehouse>("Test", "Address");
+    auto section = std::make_shared<WarehouseSection>("A", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("A-01", 1);
+    auto location = std::make_shared<StorageLocation>("A-01-B-01", 100);
+    shelf->addLocation(location);
+    section->addShelf(shelf);
+    warehouse->addSection(section);
+    WarehouseManager manager(warehouse);
+    WarehouseManager managerTwo(warehouse);
+    EXPECT_TRUE(manager == managerTwo);
+    EXPECT_FALSE(manager != managerTwo);
+    auto book = std::make_shared<Book>(
+        ISBN("9783161484100"), BookTitle("Delayed", "", "EN"), BookMetadata(2024, "EN", 1, ""),
+        PhysicalProperties(300, 200, 130, 20, 250, PhysicalProperties::CoverType::PAPERBACK, "Paper"),
+        Genre(Genre::Type::SCIENCE_FICTION), std::make_shared<Publisher>("Pub","test@pub.com",2000),
+        BookCondition(BookCondition::Condition::NEW), 19.99
+    );
+    auto delivery = manager.createDelivery("Supplier", "2024-12-31", "TRK123", "Carrier", 100.0, {book});
+    delivery->setStatus(Delivery::DeliveryStatus::DELAYED);
+    EXPECT_THROW(manager.processDeliveryArrival(delivery, "EMP-001"), DataValidationException);
+}
+
+TEST(WarehouseSectionTest, IsEmptyReflectsCurrentLoad) {
+    WarehouseSection section("C", "General", "", WarehouseSection::SectionType::GENERAL);
+    EXPECT_TRUE(section.isEmpty());
+    auto shelf = std::make_shared<Shelf>("C-01", 1);
+    auto loc = std::make_shared<StorageLocation>("C-01-B-01", 100);
+    loc->addBooks(10);
+    shelf->addLocation(loc);
+    section.addShelf(shelf);
+    EXPECT_FALSE(section.isEmpty());
+}
+
+TEST(WarehouseSectionTest, IsFullDependsOnShelvesFullStatus) {
+    WarehouseSection section("D", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf1 = std::make_shared<Shelf>("D-01", 1);
+    auto shelf2 = std::make_shared<Shelf>("D-02", 1);
+    auto loc1 = std::make_shared<StorageLocation>("D-01-B-01", 100);
+    auto loc2 = std::make_shared<StorageLocation>("D-02-B-01", 50);
+    shelf1->addLocation(loc1);
+    shelf2->addLocation(loc2);
+    section.addShelf(shelf1);
+    section.addShelf(shelf2);
+    EXPECT_FALSE(section.isFull());
+    loc1->addBooks(100);
+    loc2->addBooks(50);
+    EXPECT_TRUE(section.isFull());
+}
+
+TEST(WarehouseSectionTest, SetTemperatureValidAndInvalid) {
+    WarehouseSection section("E", "Refrigerated", "Cold", WarehouseSection::SectionType::REFRIGERATED, 5.0, 60.0);
+    EXPECT_NO_THROW(section.setTemperature(4.5));
+    EXPECT_DOUBLE_EQ(section.getTemperature(), 4.5);
+    EXPECT_THROW(section.setTemperature(-100.0), DataValidationException);
+}
+
+TEST(WarehouseSectionTest, SetHumidityValidAndInvalid) {
+    WarehouseSection section("F", "General", "", WarehouseSection::SectionType::GENERAL, 18.0, 50.0);
+    EXPECT_NO_THROW(section.setHumidity(55.5));
+    EXPECT_DOUBLE_EQ(section.getHumidity(), 55.5);
+    EXPECT_THROW(section.setHumidity(-10.0), DataValidationException);
+}
+
+TEST(WarehouseSectionTest, EqualityOperatorsMatchAllFieldsAndShelves) {
+    WarehouseSection s1("G", "General", "Desc", WarehouseSection::SectionType::GENERAL, 20.0, 40.0);
+    WarehouseSection s2("G", "General", "Desc", WarehouseSection::SectionType::GENERAL, 20.0, 40.0);
+    auto shelf = std::make_shared<Shelf>("G-01", 1);
+    auto loc = std::make_shared<StorageLocation>("G-01-B-01", 100);
+    shelf->addLocation(loc);
+    s1.addShelf(shelf);
+    auto shelfCopy = std::make_shared<Shelf>("G-01", 1);
+    auto locCopy = std::make_shared<StorageLocation>("G-01-B-01", 100);
+    shelfCopy->addLocation(locCopy);
+    s2.addShelf(shelfCopy);
+    EXPECT_TRUE(s1 != s2);
+    EXPECT_FALSE(s1 == s2);
+    s2.setHumidity(41.0);
+    EXPECT_FALSE(s1 == s2);
+    EXPECT_TRUE(s1 != s2);
+}
+
+TEST(WarehouseSectionTest, EqualityOperatorsDifferOnSectionIdOrShelves) {
+    WarehouseSection a("H", "General", "", WarehouseSection::SectionType::GENERAL);
+    WarehouseSection b("I", "General", "", WarehouseSection::SectionType::GENERAL);
+    EXPECT_FALSE(a == b);
+    EXPECT_TRUE(a != b);
+    WarehouseSection c("J", "General", "", WarehouseSection::SectionType::GENERAL);
+    WarehouseSection d("J", "General", "", WarehouseSection::SectionType::GENERAL);
+    auto shelf = std::make_shared<Shelf>("J-01", 1);
+    c.addShelf(shelf);
+    EXPECT_FALSE(c == d);
+    EXPECT_TRUE(c != d);
 }

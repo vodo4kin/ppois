@@ -107,23 +107,6 @@ public:
 };
 
 /**
- * @class PaymentProcessingException
- * @brief Exception for payment processing failures
- * 
- * Thrown when payment gateway errors or invalid payment data detected
- */
-class PaymentProcessingException : public WarehouseException {
-public:
-    /**
-     * @brief Construct a new PaymentProcessingException object
-     * 
-     * @param msg Description of payment processing failure
-     */
-    explicit PaymentProcessingException(const std::string& msg) 
-        : WarehouseException("Payment Processing Error: " + msg) {}
-};
-
-/**
  * @class AuthenticationException
  * @brief Exception for user authentication failures
  * 

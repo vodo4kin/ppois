@@ -26,7 +26,7 @@ CustomerOrder::CustomerOrder(const std::string& orderId, const std::string& orde
         throw DataValidationException("Customer cannot be null");
     }
     if (!shipping) {
-        throw DataValidationException("Shipping info cannot be null");
+        throw ShippingException("Shipping info cannot be null");
     }
     this->customer = customer;
     this->shipping = shipping;

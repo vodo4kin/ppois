@@ -412,11 +412,11 @@ TEST(CustomerTest, CategoryUpgrade) {
                      "CUST001", regular, "2024-01-15");
     customer.addPurchase(500.0);
     EXPECT_FALSE(customer.isEligibleForUpgrade());
-    customer.addPurchase(600.0); // Total 1100, above 1000 threshold
+    customer.addPurchase(600.0);
     EXPECT_TRUE(customer.isEligibleForUpgrade());
     customer.upgradeCategory();
     EXPECT_EQ(customer.getCategory().toString(), "Silver");
-    customer.addPurchase(5000.0); // Total 6100, above 5000 threshold
+    customer.addPurchase(5000.0);
     customer.upgradeCategory();
     EXPECT_EQ(customer.getCategory().toString(), "Gold");
 }
@@ -506,11 +506,11 @@ TEST(EmployeeTest, SalaryCalculations) {
     EmployeeRole cashier(EmployeeRole::Role::CASHIER);
     Employee cashierEmp("P001", "Cash", "Ier", "1995-01-01", address, contact,
                        "EMP001", cashier, "2024-01-15", 25000.0, "Sales");
-    EXPECT_DOUBLE_EQ(cashierEmp.calculateSalary(), 30000.0); // 25000 * 1.2
+    EXPECT_DOUBLE_EQ(cashierEmp.calculateSalary(), 30000.0);
     EmployeeRole admin(EmployeeRole::Role::ADMINISTRATOR);
     Employee adminEmp("P002", "Admin", "User", "1980-01-01", address, contact,
                      "EMP002", admin, "2024-01-15", 60000.0, "IT");
-    EXPECT_DOUBLE_EQ(adminEmp.calculateSalary(), 120000.0); // 60000 * 2.0
+    EXPECT_DOUBLE_EQ(adminEmp.calculateSalary(), 120000.0);
 }
 
 TEST(EmployeeTest, PermissionChecks) {
@@ -544,7 +544,7 @@ TEST(EmployeeTest, EmployeeInfo) {
     EXPECT_FALSE(info.empty());
     EXPECT_NE(info.find("EMP001"), std::string::npos);
     EXPECT_NE(info.find("Inventory Manager"), std::string::npos);
-    EXPECT_NE(info.find("75000"), std::string::npos); // 50000 * 1.5
+    EXPECT_NE(info.find("75000"), std::string::npos);
 }
 
 TEST(EmployeeTest, EmployeeEquality) {
@@ -571,6 +571,9 @@ TEST(UserAccountTest, ValidUserAccount) {
     EXPECT_EQ(account.getPerson(), person);
     EXPECT_FALSE(account.isAccountLocked());
     EXPECT_EQ(account.getFailedLoginAttempts(), 0);
+    EXPECT_THROW(account.authenticate("SecurePass12356"), AuthorizationException);
+    account.lockAccount();
+    EXPECT_THROW(account.authenticate("SecurePass123"), AuthenticationException);
 }
 
 TEST(UserAccountTest, InvalidUserAccount) {
@@ -598,7 +601,7 @@ TEST(PersonsIntegrationTest, CompletePersonSystem) {
     EXPECT_DOUBLE_EQ(customer.calculateDiscount(), 10.0);
     EXPECT_EQ(customer.getLoyaltyPoints(), 2100);
     EXPECT_TRUE(employee.canManageInventory());
-    EXPECT_DOUBLE_EQ(employee.calculateSalary(), 75000.0); // 50000 * 1.5
+    EXPECT_DOUBLE_EQ(employee.calculateSalary(), 75000.0);
     EXPECT_TRUE(account.authenticate("SecureAlice123"));
     EXPECT_EQ(account.getPerson()->getFullName(), "Alice Wonderland");
     EXPECT_EQ(customer.getFullName(), "Alice Wonderland");

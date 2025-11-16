@@ -23,9 +23,9 @@ TEST(ISBNTest, ValidISBN10) {
 TEST(ISBNTest, InvalidISBN) {
     EXPECT_THROW(ISBN isbn("invalid"), InvalidISBNException);
     EXPECT_THROW(ISBN isbn("123"), InvalidISBNException);
-    EXPECT_THROW(ISBN isbn("978-3-16-148410-1"), InvalidISBNException); // wrong check digit
-    EXPECT_THROW(ISBN isbn("0306406153"), InvalidISBNException); // wrong check digit for ISBN10
-    EXPECT_THROW(ISBN isbn("978316148410X"), InvalidISBNException); // invalid character
+    EXPECT_THROW(ISBN isbn("978-3-16-148410-1"), InvalidISBNException);
+    EXPECT_THROW(ISBN isbn("0306406153"), InvalidISBNException);
+    EXPECT_THROW(ISBN isbn("978316148410X"), InvalidISBNException);
 }
 
 TEST(ISBNTest, EqualityAndInequality) {
@@ -67,7 +67,7 @@ TEST(BookTitleTest, InvalidTitle) {
     EXPECT_THROW(BookTitle title("Valid", "   ", "EN"), DataValidationException);
     EXPECT_THROW(BookTitle title("Valid", "Sub", ""), DataValidationException);
     EXPECT_THROW(BookTitle title("Valid", "Sub", "E"), DataValidationException);
-    std::string longTitle(129, 'a'); // Exceeds MAX_LENGTH
+    std::string longTitle(129, 'a');
     EXPECT_THROW(BookTitle title(longTitle, "", "EN"), DataValidationException);
 }
 
@@ -102,7 +102,7 @@ TEST(BookMetadataTest, ValidMetadata) {
 
 TEST(BookMetadataTest, InvalidMetadata) {
     EXPECT_THROW(BookMetadata metadata(1300, "EN", 1, ""), DataValidationException);
-    EXPECT_THROW(BookMetadata metadata(2026, "EN", 1, ""), DataValidationException); // Future year
+    EXPECT_THROW(BookMetadata metadata(2026, "EN", 1, ""), DataValidationException);
     EXPECT_THROW(BookMetadata metadata(2024, "English", 1, ""), DataValidationException);
     EXPECT_THROW(BookMetadata metadata(2024, "EN", 0, ""), DataValidationException);
     EXPECT_THROW(BookMetadata metadata(2024, "EN", -1, ""), DataValidationException);
@@ -159,7 +159,7 @@ TEST(GenreTest, EqualityAndInequality) {
     Genre genre3(Genre::Type::MYSTERY);
     EXPECT_EQ(genre1, genre2);
     EXPECT_NE(genre1, genre3);
-    EXPECT_EQ(genre1, genre1); // Self-equality
+    EXPECT_EQ(genre1, genre1);
 }
 
 TEST(PublisherTest, ValidPublisher) {
@@ -179,7 +179,7 @@ TEST(PublisherTest, InvalidPublisher) {
     EXPECT_THROW(Publisher pub("", "test@test.com", 2000), DataValidationException);
     EXPECT_THROW(Publisher pub("Valid", "invalid-email", 2000), DataValidationException);
     EXPECT_THROW(Publisher pub("Valid", "test@test.com", 1300), DataValidationException);
-    EXPECT_THROW(Publisher pub("Valid", "test@test.com", 2026), DataValidationException); // Future year
+    EXPECT_THROW(Publisher pub("Valid", "test@test.com", 2026), DataValidationException);
     std::string longName(101, 'a');
     EXPECT_THROW(Publisher pub(longName, "test@test.com", 2000), DataValidationException);
     EXPECT_THROW(Publisher pub("Valid", "@test.com", 2000), DataValidationException);
@@ -238,7 +238,7 @@ TEST(BookConditionTest, EqualityAndInequality) {
     BookCondition cond3(BookCondition::Condition::GOOD);
     EXPECT_EQ(cond1, cond2);
     EXPECT_NE(cond1, cond3);
-    EXPECT_EQ(cond1, cond1); // Self-equality
+    EXPECT_EQ(cond1, cond1);
 }
 
 TEST(BookReviewTest, ValidReview) {
@@ -558,9 +558,9 @@ TEST(BookTest, PriceAndDiscount) {
     EXPECT_DOUBLE_EQ(book->getPrice(), 90.0);
     book->setPrice(50.0);
     EXPECT_DOUBLE_EQ(book->getPrice(), 50.0);
-    book->applyDiscount(0); // 0% discount
+    book->applyDiscount(0);
     EXPECT_DOUBLE_EQ(book->getPrice(), 50.0);
-    book->applyDiscount(100); // 100% discount (free)
+    book->applyDiscount(100);
     EXPECT_DOUBLE_EQ(book->getPrice(), 0.0);
     EXPECT_THROW(book->setPrice(-10), DataValidationException);
     EXPECT_THROW(book->applyDiscount(-10), DataValidationException);
@@ -627,13 +627,13 @@ TEST(BookTest, ReviewsManagement) {
     book->addReview(review2);
     book->addReview(review3);
     EXPECT_EQ(book->getReviewCount(), 3);
-    EXPECT_DOUBLE_EQ(book->getAverageRating(), 4.0); // (4+5+3)/3 = 4.0
+    EXPECT_DOUBLE_EQ(book->getAverageRating(), 4.0);
     EXPECT_EQ(book->getReviews().size(), 3);
     EXPECT_TRUE(book->isHighlyRated());
     book->removeReview(review3);
     EXPECT_EQ(book->getReviewCount(), 2);
-    EXPECT_DOUBLE_EQ(book->getAverageRating(), 4.5); // (4+5)/2 = 4.5
-    book->removeReview(review3); // Should not throw or affect anything
+    EXPECT_DOUBLE_EQ(book->getAverageRating(), 4.5);
+    book->removeReview(review3);
     EXPECT_EQ(book->getReviewCount(), 2);
     EXPECT_THROW(book->addReview(nullptr), DataValidationException);
 }
@@ -700,8 +700,8 @@ TEST(BookTest, BookEquality) {
         BookCondition(BookCondition::Condition::NEW),
         19.99
     );
-    EXPECT_EQ(*book1, *book2); // Same ISBN
-    EXPECT_NE(*book1, *book3); // Different ISBN
+    EXPECT_EQ(*book1, *book2);
+    EXPECT_NE(*book1, *book3);
     EXPECT_EQ(*book1, *book1);
     EXPECT_EQ(*book2, *book2);
     EXPECT_EQ(*book3, *book3);
@@ -726,7 +726,6 @@ TEST(BookTest, BestsellerStatus) {
         );
         book->addReview(review);
     }
-    
     EXPECT_TRUE(book->isHighlyRated());
 }
 
@@ -851,8 +850,7 @@ TEST(BookCollectionTest, EqualityAndInequality) {
     EXPECT_NE(coll1, coll4);
     EXPECT_NE(coll1, coll5);
     BookCollection coll6("Same", "Desc", "Category");
-    EXPECT_NE(coll1, coll6); // Different books
-    // Self-equality
+    EXPECT_NE(coll1, coll6);
     EXPECT_EQ(coll1, coll1);
     EXPECT_EQ(coll2, coll2);
 }
@@ -940,7 +938,7 @@ TEST(PerformanceTest, LargeNumberOfReviews) {
             "Reader " + std::to_string(i), 
             "Review " + std::to_string(i), 
             "Text " + std::to_string(i), 
-            3 + (i % 3), // Ratings between 3-5
+            3 + (i % 3),
             "2024-01-15"
         );
         book->addReview(review);

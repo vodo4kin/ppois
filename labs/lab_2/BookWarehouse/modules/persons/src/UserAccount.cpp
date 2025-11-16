@@ -90,7 +90,7 @@ bool UserAccount::authenticate(const std::string& password) const {
             const_cast<UserAccount*>(this)->lockAccount();
             throw AuthenticationException("Too many failed attempts - account locked");
         }
-        throw AuthenticationException("Invalid password");
+        throw AuthorizationException("Invalid password");
     }    
     const_cast<UserAccount*>(this)->resetFailedAttempts();
     return true;

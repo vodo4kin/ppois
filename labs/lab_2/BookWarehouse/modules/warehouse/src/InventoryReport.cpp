@@ -52,7 +52,7 @@ std::string InventoryReport::generateBookStockReport(const std::string& bookIsbn
     validateWarehouse();
     auto items = warehouse->findInventoryByBook(bookIsbn);
     if (items.empty()) {
-        return "No stock found for book ISBN: " + bookIsbn;
+        throw ReportGenerationException("No stock found for book ISBN: " + bookIsbn);
     }
     std::string report = "=== BOOK STOCK REPORT ===\n";
     report += buildBookHeader(items, bookIsbn);
@@ -110,7 +110,6 @@ std::string InventoryReport::generateStatisticsReport() const {
     return report;
 }
 
-// Private helper methods
 InventoryReport::BookCounts InventoryReport::calculateBookCounts(
     const std::vector<std::shared_ptr<InventoryItem>>& inventory) const {
     BookCounts counts = {0, 0};

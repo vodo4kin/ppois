@@ -30,7 +30,7 @@ PurchaseOrder::PurchaseOrder(const std::string& orderId, const std::string& orde
         throw DataValidationException("Invalid expected delivery date: " + expectedDeliveryDate);
     }
     if (!isValidShippingCost(shippingCost)) {
-        throw DataValidationException("Invalid shipping cost: " + std::to_string(shippingCost));
+        throw ShippingException("Invalid shipping cost: " + std::to_string(shippingCost));
     }
     this->supplierName = supplierName;
     this->supplierContact = supplierContact;

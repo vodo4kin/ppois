@@ -55,7 +55,7 @@ TEST(OrderStatusTest, UpdateStatusValid) {
 
 TEST(OrderStatusTest, UpdateStatusInvalid) {
     OrderStatus status(OrderStatus::Status::PENDING, "2024-01-15");
-    EXPECT_THROW(status.updateStatus(OrderStatus::Status::SHIPPED, "2024-01-16"), InvalidOrderStateException);
+    EXPECT_THROW(status.updateStatus(OrderStatus::Status::SHIPPED, "2024-01-16"), OrderProcessingException);
 }
 
 TEST(OrderStatusTest, StatusChecks) {
@@ -313,7 +313,7 @@ TEST(OrderTest, StatusOperations) {
 
 TEST(OrderTest, InvalidStatusOperations) {
     Order order("ORD-001", "2024-01-15", "");
-    EXPECT_THROW(order.setStatus(OrderStatus::Status::DELIVERED, "2024-01-16"), InvalidOrderStateException);
+    EXPECT_THROW(order.setStatus(OrderStatus::Status::DELIVERED, "2024-01-16"), OrderProcessingException);
 }
 
 TEST(OrderTest, NotesOperations) {
@@ -525,7 +525,14 @@ TEST(CustomerOrderTest, ConstructorInvalidData) {
                                                  ShippingInfo::ShippingMethod::STANDARD,
                                                  "TRK123456", "Carrier", 15.0, 0.0, "");
     EXPECT_THROW(CustomerOrder order("CUST-ORD-001", "2024-01-15", nullptr, shipping), DataValidationException);
-    EXPECT_THROW(CustomerOrder order("CUST-ORD-001", "2024-01-15", customer, nullptr), DataValidationException);
+    EXPECT_THROW(CustomerOrder order("CUST-ORD-001", "2024-01-15", customer, nullptr), ShippingException);
+    EXPECT_NO_THROW(CustomerOrder order("CUST-ORD-001", "2024-01-15", customer, shipping));
+    CustomerOrder order("CUST-ORD-001", "2024-01-15", customer, shipping);
+    EXPECT_NO_THROW(order.processPayment("2025-10-10"));
+    EXPECT_ANY_THROW(order.shipOrder("2025-10-10"));
+    EXPECT_ANY_THROW(order.shipOrder("2025-10-120"));
+    CustomerOrder orderTwo("CUST-ORD-002", "2024-01-15", customer, shipping);
+    EXPECT_THROW(orderTwo.shipOrder("2025-10-12"), InvalidOrderStateException);
 }
 
 TEST(CustomerOrderTest, DiscountAndTaxOperations) {
@@ -676,7 +683,7 @@ TEST(PurchaseOrderTest, ConstructorInvalidData) {
     EXPECT_THROW(PurchaseOrder order("PURCH-ORD-001", "2024-01-15", "Supplier", "contact@test.com", 
                                    "invalid-date", 50.0), DataValidationException);
     EXPECT_THROW(PurchaseOrder order("PURCH-ORD-001", "2024-01-15", "Supplier", "contact@test.com", 
-                                   "2024-01-25", -10.0), DataValidationException);
+                                   "2024-01-25", -10.0), ShippingException);
 }
 
 TEST(PurchaseOrderTest, SupplierOperations) {
@@ -780,10 +787,8 @@ TEST(OrderManagerTest, CreateCustomerOrder) {
     shelf->addLocation(location);
     section->addShelf(shelf);
     warehouse->addSection(section);
-    
     auto warehouseManager = std::make_shared<WarehouseManager>(warehouse);
     OrderManager manager(warehouseManager);
-    
     auto customer = std::make_shared<Customer>(
         "P001", "John", "Doe", "1990-01-01",
         std::make_shared<Address>("123 Main St", "Springfield", "12345", "USA"),
@@ -805,10 +810,8 @@ TEST(OrderManagerTest, CreateCustomerOrder) {
         BookCondition(BookCondition::Condition::NEW),
         19.99
     );
-    
     auto inventoryItem = std::make_shared<InventoryItem>(book, 10, location, "2024-01-15");
     warehouse->addInventoryItem(inventoryItem);
-    
     auto item = std::make_shared<OrderItem>(book, 5, 19.99, 10.0);
     std::vector<std::shared_ptr<OrderItem>> items = {item};
     auto order = manager.createCustomerOrder(customer, shipping, items, "Test order");
@@ -880,7 +883,6 @@ TEST(OrderManagerTest, OrderRetrieval) {
         std::make_shared<Warehouse>("Test Warehouse", "Test Address")
     );
     OrderManager manager(warehouseManager);
-    
     auto purchaseBook = std::make_shared<Book>(
         ISBN("0306406152"),
         BookTitle("Purchase Book", "", "EN"),
@@ -907,7 +909,6 @@ TEST(OrderManagerTest, RevenueAndStatistics) {
         std::make_shared<Warehouse>("Test Warehouse", "Test Address")
     );
     OrderManager manager(warehouseManager);
-    
     std::string stats = manager.getOrderStatistics();
     EXPECT_FALSE(stats.empty());
 }

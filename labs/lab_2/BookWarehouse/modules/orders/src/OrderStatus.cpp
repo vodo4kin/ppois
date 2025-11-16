@@ -36,7 +36,6 @@ std::string OrderStatus::toString() const noexcept {
 
 bool OrderStatus::isValidTransition(Status newStatus) const noexcept {
     if (status == newStatus) return true;
-    
     switch(status) {
         case Status::PENDING:
             return newStatus == Status::CONFIRMED || newStatus == Status::CANCELLED 
@@ -70,7 +69,7 @@ void OrderStatus::updateStatus(Status newStatus, const std::string& changeDate) 
         throw DataValidationException("Invalid change date: " + changeDate);
     }
     if (!isValidTransition(newStatus)) {
-        throw InvalidOrderStateException("Invalid status transition from " + toString() + " to " + 
+        throw OrderProcessingException("Invalid status transition from " + toString() + " to " + 
                                        OrderStatus(newStatus, changeDate).toString());
     }
     status = newStatus;
