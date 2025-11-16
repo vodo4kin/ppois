@@ -87,9 +87,7 @@ void StockTransfer::execute() {
                 }
                 item->setLocation(sourceLocation);
             }
-        } catch (const std::exception& rollbackError) {
-            // don't interrupt
-        }
+        } catch (const std::exception& rollbackError) {}
         setStatus(MovementStatus::CANCELLED);
         throw WarehouseException("Failed to execute transfer: " + std::string(e.what()));
     }
@@ -111,9 +109,7 @@ void StockTransfer::cancel() {
                     destinationLocation->removeBooks(transferQuantity);
                 }
                 item->setLocation(sourceLocation);
-            } catch (const std::exception& e) {
-                // don't interrupt
-            }
+            } catch (const std::exception& e) {}
         }
     }
     setStatus(MovementStatus::CANCELLED);

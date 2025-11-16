@@ -14,10 +14,6 @@
 #include "Address.hpp"
 #include "ContactInfo.hpp"
 
-// Forward declarations
-class Address;
-class ContactInfo;
-
 /**
  * @class Person
  * @brief Base class for all person entities in the system

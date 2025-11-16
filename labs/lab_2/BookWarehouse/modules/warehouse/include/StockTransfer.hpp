@@ -12,9 +12,7 @@
 #include <string>
 #include <memory>
 #include "StockMovement.hpp"
-
-// Forward declaration
-class StorageLocation;
+#include "StorageLocation.hpp"
 
 /**
  * @class StockTransfer
