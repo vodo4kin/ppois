@@ -3,11 +3,11 @@ project(TravelBooking)
 set(CMAKE_CXX_STANDARD 17)
 find_package(GTest REQUIRED)
 file(GLOB_RECURSE SOURCES 
-    "modules/*/cpp/*.cpp"
+    "modules/*/src/cpp/*.cpp"
     "app/*.cpp"
 )
 file(GLOB_RECURSE HEADERS 
-    "modules/*/hpp/*.hpp"
+    "modules/*/src/hpp/*.hpp"
     "app/*.hpp"
     "modules/*/*.hpp"
 )
@@ -15,12 +15,12 @@ set(MAIN_SOURCES ${SOURCES})
 list(FILTER MAIN_SOURCES EXCLUDE REGEX ".*tests?.*")
 add_executable(travel_booking ${MAIN_SOURCES} ${HEADERS})
 target_include_directories(travel_booking PRIVATE 
-    modules/persons/hpp
-    modules/booking/hpp
-    modules/tours/hpp
-    modules/transportation/hpp
-    modules/accommodation/hpp
-    modules/meal/hpp
+    modules/persons/src/hpp
+    modules/booking/src/hpp
+    modules/tours/src/hpp
+    modules/transportation/src/hpp
+    modules/accommodation/src/hpp
+    modules/meal/src/hpp
     app/
     modules
 )
@@ -36,12 +36,12 @@ add_executable(test_runner
     ${TEST_SOURCES} ${HEADERS}
 )
 target_include_directories(test_runner PRIVATE 
-    modules/persons/hpp
-    modules/booking/hpp
-    modules/tours/hpp
-    modules/transportation/hpp
-    modules/accommodation/hpp
-    modules/meal/hpp
+    modules/persons/src/hpp
+    modules/booking/src/hpp
+    modules/tours/src/hpp
+    modules/transportation/src/hpp
+    modules/accommodation/src/hpp
+    modules/meal/src/hpp
     app/
     modules
 )
