@@ -2,18 +2,26 @@
 #include "exceptions/TravelBookingExceptions.hpp"
 
 void BookingManager::addBooking(const std::shared_ptr<Booking>& booking) {
-    if (!booking) throw InvalidDataException("booking", "cannot be null");
-    bookings.push_back(booking);
+    try {
+        if (!booking) throw InvalidDataException("booking", "cannot be null");
+        bookings.push_back(booking);
+    } catch (const TravelBookingException& e) {
+        throw InvalidDataException("BookingManager", "Failed to add booking: " + std::string(e.what()));
+    }
 }
 
 bool BookingManager::cancelBooking(int bookingId) {
-    for (auto& booking : bookings) {
-        if (booking->getBookingId() == bookingId) {
-            booking->cancel();
-            return true;
+    try {
+        for (auto& booking : bookings) {
+            if (booking->getBookingId() == bookingId) {
+                booking->cancel();
+                return true;
+            }
         }
+        throw ResourceNotFoundException("Booking", std::to_string(bookingId));
+    } catch (const TravelBookingException& e) {
+        throw InvalidDataException("BookingManager", "Failed to cancel booking: " + std::string(e.what()));
     }
-    throw ResourceNotFoundException("Booking", std::to_string(bookingId));
 }
 
 std::shared_ptr<Booking> BookingManager::findBookingById(int bookingId) const {

@@ -209,7 +209,7 @@ TEST(BookingManagerTest, CancelBookingNotFound) {
     BookingManager manager;
     EXPECT_THROW({
         manager.cancelBooking(999);
-    }, ResourceNotFoundException);
+    }, InvalidDataException);
 }
 
 TEST(BookingManagerTest, FindBookingByIdExists) {

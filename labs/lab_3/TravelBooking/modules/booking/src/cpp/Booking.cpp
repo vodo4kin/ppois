@@ -14,12 +14,20 @@ Booking::Booking(std::shared_ptr<Customer> customer,
                  std::shared_ptr<Tour> tour,
                  std::shared_ptr<Transport> transport)
     : customer(customer), tour(tour), transport(transport), status(Status::PENDING) {
-    if (!customer || !tour || !transport) {
-        throw InvalidBookingException("Booking must have valid customer, tour, and transport");
+    try {
+        if (!customer || !tour || !transport) {
+            throw InvalidBookingException("Booking must have valid customer, tour, and transport");
+        }
+        updateTotalPrice();
+        bookingDate = DateUtils::getCurrentDate();
+        nextBookingId++;
+    } catch (const TravelBookingException& e) {
+        throw InvalidBookingException("Failed to create booking object: " + std::string(e.what()));
+    } catch (const std::exception& e) {
+        throw InvalidBookingException("Unexpected error during booking creation: " + std::string(e.what()));
+    } catch (...) {
+        throw InvalidBookingException("Unknown error during booking creation");
     }
-    updateTotalPrice();
-    bookingDate = DateUtils::getCurrentDate();
-    nextBookingId++;
 }
 
 int Booking::getBookingId() const {
