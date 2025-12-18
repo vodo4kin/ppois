@@ -1,0 +1,7 @@
+constraint_thermal_U1
+=> nrel_main_idtf:
+    [Тепловое ограничение U1 (200 мВт)]
+    (* <- lang_ru;; *);
+    [Thermal constraint U1 (200 mW)]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

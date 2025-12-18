@@ -1,0 +1,8 @@
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/CMakeFiles/edit_cache.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/CMakeFiles/rebuild_cache.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/CMakeFiles/edit_cache.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/CMakeFiles/rebuild_cache.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/CMakeFiles/pcb-layout-module.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/CMakeFiles/pcb-layout-module-tests.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/CMakeFiles/edit_cache.dir
+/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/CMakeFiles/rebuild_cache.dir

@@ -1,0 +1,18 @@
+nrel_connected_to
+<- sc_node_non_role_relation;
+<- concept_non_role_relation;
+<- concept_binary_relation;
+<- concept_oriented_relation;
+=> nrel_main_idtf:
+    [соединён с*]
+    (*
+        <- lang_ru;;
+    *);
+    [connected to*]
+    (*
+        <- lang_en;;
+    *);
+=> nrel_first_domain:
+    concept_electronic_component;
+=> nrel_second_domain:
+    concept_electronic_component;;

@@ -1,0 +1,7 @@
+constraint_via_diameter_0_3mm
+=> nrel_main_idtf:
+    [Диаметр переходного отверстия 0.3 мм]
+    (* <- lang_ru;; *);
+    [Via diameter 0.3 mm]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

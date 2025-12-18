@@ -1,0 +1,8 @@
+component_U2
+=> nrel_main_idtf:
+    [Flash память U2 (SOIC-8, 5×4 мм)]
+    (* <- lang_ru;; *);
+    [Flash memory U2 (SOIC-8, 5×4 mm)]
+    (* <- lang_en;; *);
+<- concept_electronic_component;
+=> nrel_has_constraint: constraint_min_distance_0_5mm;;

@@ -1,0 +1,9 @@
+connection_address_bus_2
+=> nrel_main_idtf:
+    [Шина адреса U1-U2]
+    (* <- lang_ru;; *);
+    [Address bus U1-U2]
+    (* <- lang_en;; *);
+<- concept_electrical_connection;
+=> nrel_connected_to: component_U1;
+=> nrel_connected_to: component_U2;;

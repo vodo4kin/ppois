@@ -1,0 +1,8 @@
+component_U4
+=> nrel_main_idtf:
+    [RAM U4 (TSOP-28, 11×4 мм)]
+    (* <- lang_ru;; *);
+    [RAM U4 (TSOP-28, 11×4 mm)]
+    (* <- lang_en;; *);
+<- concept_electronic_component;
+=> nrel_has_constraint: constraint_min_distance_0_5mm;;

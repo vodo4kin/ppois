@@ -1,0 +1,12 @@
+connection_pullup_1
+=> nrel_main_idtf:
+    [Подтяжка резисторами R1-R4]
+    (* <- lang_ru;; *);
+    [Pull-up resistors R1-R4]
+    (* <- lang_en;; *);
+<- concept_electrical_connection;
+=> nrel_connected_to: component_R1;
+=> nrel_connected_to: component_R2;
+=> nrel_connected_to: component_R3;
+=> nrel_connected_to: component_R4;
+=> nrel_connected_to: component_U1;;

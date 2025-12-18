@@ -1,0 +1,6 @@
+concept_electronic_component
+<- sc_node_class;
+<- concept_class;
+=> nrel_main_idtf:
+    [электронный компонент] (* <- lang_ru;; *);
+    [electronic component] (* <- lang_en;; *);;

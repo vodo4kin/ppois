@@ -1,0 +1,7 @@
+constraint_em_shielding
+=> nrel_main_idtf:
+    [Экранирование высокочастотных сигналов]
+    (* <- lang_ru;; *);
+    [HF signal shielding]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

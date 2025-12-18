@@ -1,0 +1,7 @@
+constraint_track_spacing_0_2mm
+=> nrel_main_idtf:
+    [Расстояние между дорожками 0.2 мм]
+    (* <- lang_ru;; *);
+    [Track spacing 0.2 mm]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

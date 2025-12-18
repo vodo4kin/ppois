@@ -1,0 +1,8 @@
+component_U9
+=> nrel_main_idtf:
+    [Буферная память U9 (SOT-23, 3×3 мм)]
+    (* <- lang_ru;; *);
+    [Buffer memory U9 (SOT-23, 3×3 mm)]
+    (* <- lang_en;; *);
+<- concept_electronic_component;
+=> nrel_has_constraint: constraint_min_distance_0_5mm;;

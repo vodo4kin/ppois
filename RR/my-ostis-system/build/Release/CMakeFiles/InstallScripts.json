@@ -1,0 +1,9 @@
+{
+	"InstallScripts" : 
+	[
+		"/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/cmake_install.cmake",
+		"/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/cmake_install.cmake",
+		"/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

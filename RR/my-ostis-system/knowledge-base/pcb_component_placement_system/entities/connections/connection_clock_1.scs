@@ -1,0 +1,13 @@
+connection_clock_1
+=> nrel_main_idtf:
+    [Тактовый сигнал CLK_EXT (высокочастотный)]
+    (* <- lang_ru;; *);
+    [Clock signal CLK_EXT (high frequency)]
+    (* <- lang_en;; *);
+<- concept_electrical_connection;
+=> nrel_connected_to: component_U1;
+=> nrel_connected_to: component_U2;
+=> nrel_connected_to: component_U3;
+=> nrel_connected_to: component_U4;
+=> nrel_has_constraint: constraint_em_shielding;
+=> nrel_has_constraint: constraint_max_length_15mm;;

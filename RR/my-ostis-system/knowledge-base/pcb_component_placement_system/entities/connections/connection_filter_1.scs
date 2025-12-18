@@ -1,0 +1,10 @@
+connection_filter_1
+=> nrel_main_idtf:
+    [Фильтрация питания R5-C1]
+    (* <- lang_ru;; *);
+    [Power filtering R5-C1]
+    (* <- lang_en;; *);
+<- concept_electrical_connection;
+=> nrel_connected_to: component_R5;
+=> nrel_connected_to: component_C1;
+=> nrel_connected_to: component_U1;;

@@ -1,0 +1,6 @@
+action_find_optimal_component_layout
+<- sc_node_class;
+<- concept_class;
+=> nrel_main_idtf:
+    [действие поиска оптимальной компоновки компонентов] (* <- lang_ru;; *);
+    [action to find optimal component layout] (* <- lang_en;; *);;

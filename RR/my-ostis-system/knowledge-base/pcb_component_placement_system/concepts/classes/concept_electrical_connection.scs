@@ -1,0 +1,6 @@
+concept_electrical_connection
+<- sc_node_class;
+<- concept_class;
+=> nrel_main_idtf:
+    [электрическое соединение] (* <- lang_ru;; *);
+    [electrical connection] (* <- lang_en;; *);;

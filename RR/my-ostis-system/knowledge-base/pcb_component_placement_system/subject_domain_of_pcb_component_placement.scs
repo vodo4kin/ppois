@@ -1,0 +1,36 @@
+subject_domain_of_pcb_component_placement
+<- concept_subject_domain;
+=> nrel_main_idtf:
+    [Предметная область размещения компонентов на печатной плате]
+    (*
+        <- lang_ru;;
+    *);
+    [PCB Component Placement Subject Domain]
+    (*
+        <- lang_en;;
+    *);
+<= nrel_private_subject_domain:
+    subject_domain_of_electronics;
+=> nrel_private_subject_domain:
+    subject_domain_of_optimization;
+-> rrel_maximum_studied_object_class:
+    concept_electronic_system;
+=> rrel_not_maximum_studied_object_class:
+    concept_electronic_component;
+=> rrel_not_maximum_studied_object_class:
+    concept_electrical_connection;
+=> rrel_not_maximum_studied_object_class:
+    concept_layout_constraint;
+-> rrel_explored_relation:
+    nrel_connected_to;
+-> rrel_explored_relation:
+    nrel_has_constraint;
+=> nrel_note:
+    [Данная предметная область описывает задачу оптимального размещения электронных компонентов на печатной плате с учетом соединений и ограничений.]
+    (*
+        <- lang_ru;;
+    *);
+    [This subject domain describes the optimal placement of electronic components on a printed circuit board, considering connections and constraints.]
+    (*
+        <- lang_en;;
+    *);;

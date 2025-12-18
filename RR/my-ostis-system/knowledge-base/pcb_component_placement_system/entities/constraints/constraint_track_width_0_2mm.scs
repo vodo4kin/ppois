@@ -1,0 +1,7 @@
+constraint_track_width_0_2mm
+=> nrel_main_idtf:
+    [Ширина дорожки 0.2 мм]
+    (* <- lang_ru;; *);
+    [Track width 0.2 mm]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

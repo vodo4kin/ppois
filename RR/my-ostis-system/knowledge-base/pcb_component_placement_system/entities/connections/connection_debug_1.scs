@@ -1,0 +1,9 @@
+connection_debug_1
+=> nrel_main_idtf:
+    [Интерфейс отладки U1-U6]
+    (* <- lang_ru;; *);
+    [Debug interface U1-U6]
+    (* <- lang_en;; *);
+<- concept_electrical_connection;
+=> nrel_connected_to: component_U1;
+=> nrel_connected_to: component_U6;;

@@ -1,0 +1,5 @@
+if(EXISTS "/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/pcb-layout-module-tests[1]_tests.cmake")
+  include("/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/problem-solver/pcb-layout-module/pcb-layout-module-tests[1]_tests.cmake")
+else()
+  add_test(pcb-layout-module-tests_NOT_BUILT pcb-layout-module-tests_NOT_BUILT)
+endif()

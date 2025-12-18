@@ -1,0 +1,8 @@
+component_R10
+=> nrel_main_idtf:
+    [Резистор R10 (2×1 мм)]
+    (* <- lang_ru;; *);
+    [Resistor R10 (2×1 mm)]
+    (* <- lang_en;; *);
+<- concept_electronic_component;
+=> nrel_has_constraint: constraint_min_distance_0_5mm;;

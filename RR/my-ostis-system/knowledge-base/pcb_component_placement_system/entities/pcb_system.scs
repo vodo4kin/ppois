@@ -1,0 +1,26 @@
+pcb_system
+=> nrel_main_idtf:
+    [Печатная плата "УмныйДом-2025"]
+    (*
+        <- lang_ru;;
+    *);
+    [PCB "SmartHome-2025"]
+    (*
+        <- lang_en;;
+    *);
+<- concept_electronic_system;
+
+=> nrel_has_constraint: constraint_track_width_0_2mm;
+=> nrel_has_constraint: constraint_track_spacing_0_2mm;
+=> nrel_has_constraint: constraint_via_diameter_0_3mm;
+
+=> nrel_in_optimal_layout: {
+    component_U1;
+    component_U2;
+    component_U3;
+    component_U4;
+    component_R1;
+    component_R2;
+    component_C1;
+    component_C2
+} (* <- concept_optimal_layout;; *);;

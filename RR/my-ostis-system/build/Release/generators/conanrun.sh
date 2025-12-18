@@ -1,0 +1,1 @@
+. "/media/vodo4ka/Data/BSUIR/2kurs/MOIS/RR/my-ostis-system/build/Release/generators/conanrunenv-release-x86_64.sh"

@@ -1,0 +1,10 @@
+component_U1
+=> nrel_main_idtf:
+    [Микропроцессор U1 (ARM Cortex-M4, QFP-64, 8×8 мм)]
+    (* <- lang_ru;; *);
+    [Microprocessor U1 (ARM Cortex-M4, QFP-64, 8×8 mm)]
+    (* <- lang_en;; *);
+<- concept_electronic_component;
+=> nrel_has_constraint: constraint_thermal_U1;
+=> nrel_has_constraint: constraint_min_distance_5mm;
+=> nrel_has_constraint: constraint_min_distance_0_5mm;;

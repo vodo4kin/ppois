@@ -1,0 +1,7 @@
+constraint_min_distance_0_5mm
+=> nrel_main_idtf:
+    [Минимальное расстояние 0.5 мм]
+    (* <- lang_ru;; *);
+    [Minimum distance 0.5 mm]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

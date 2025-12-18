@@ -1,0 +1,7 @@
+constraint_max_length_15mm
+=> nrel_main_idtf:
+    [Максимальная длина 15 мм]
+    (* <- lang_ru;; *);
+    [Max length 15 mm]
+    (* <- lang_en;; *);
+<- concept_layout_constraint;;

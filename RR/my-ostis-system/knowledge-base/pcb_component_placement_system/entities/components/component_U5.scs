@@ -1,0 +1,8 @@
+component_U5
+=> nrel_main_idtf:
+    [Разъём SD-карты U5 (15×11 мм)]
+    (* <- lang_ru;; *);
+    [SD-card connector U5 (15×11 mm)]
+    (* <- lang_en;; *);
+<- concept_electronic_component;
+=> nrel_has_constraint: constraint_min_distance_0_5mm;;

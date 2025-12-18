@@ -1,0 +1,13 @@
+connection_power_caps_1
+=> nrel_main_idtf:
+    [Соединение питания конденсаторов]
+    (* <- lang_ru;; *);
+    [Power connection for capacitors]
+    (* <- lang_en;; *);
+<- concept_electrical_connection;
+=> nrel_connected_to: component_C1;
+=> nrel_connected_to: component_C2;
+=> nrel_connected_to: component_C3;
+=> nrel_connected_to: component_C4;
+=> nrel_connected_to: component_C5;
+=> nrel_connected_to: component_C6;;
